@@ -3,452 +3,603 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agent Command Center 2.0 - Preview</title>
+    <title>Agent Command Center 2.0 - With Gege</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-        
         * { font-family: 'Inter', sans-serif; }
-        
-        body {
-            background: #030712;
-            color: white;
-        }
-        
-        /* WriteBot Animations */
-        @keyframes writebot-float {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-8px) rotate(2deg); }
-        }
-        @keyframes paper-float-1 {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-15px) rotate(10deg); }
-        }
-        @keyframes paper-float-2 {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-12px) rotate(-15deg); }
-        }
-        @keyframes steam {
-            0% { opacity: 0; transform: translateY(0); }
-            50% { opacity: 0.6; }
-            100% { opacity: 0; transform: translateY(-15px); }
-        }
-        
-        /* PixelBot Animations */
-        @keyframes pixelbot-float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-6px); }
-        }
-        @keyframes color-swirl {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        @keyframes color-blob {
-            0%, 100% { transform: scale(0.8); opacity: 0.4; }
-            50% { transform: scale(1.2); opacity: 0.8; }
-        }
-        
-        /* KeyBot Animations */
-        @keyframes keybot-float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-4px); }
-        }
-        @keyframes node-pulse {
-            0%, 100% { transform: scale(0.8); opacity: 0.4; }
-            50% { transform: scale(1.1); opacity: 1; }
-        }
-        @keyframes data-flow {
-            0% { stroke-dashoffset: 20; }
-            100% { stroke-dashoffset: 0; }
-        }
-        
-        /* PressBot Animations */
-        @keyframes pressbot-float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
-        @keyframes rocket-launch {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        @keyframes exhaust {
-            0% { opacity: 1; transform: translateY(0) scale(1); }
-            100% { opacity: 0; transform: translateY(20px) scale(0.5); }
-        }
-        @keyframes globe-spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* Card hover effects */
-        .bot-card {
-            transition: all 0.3s ease;
-        }
-        .bot-card:hover {
-            transform: scale(1.03);
-            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
-        }
-        
-        /* Button shine */
-        .btn-shine {
-            position: relative;
-            overflow: hidden;
-        }
-        .btn-shine::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.6s;
-        }
-        .btn-shine:hover::after {
-            left: 100%;
-        }
-        
-        /* Status pulse */
-        @keyframes status-pulse {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-            50% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
-        }
-        .status-idle { animation: status-pulse 2s infinite; }
-        
-        @keyframes working-pulse {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.6); }
-            50% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
-        }
-        .status-working { animation: working-pulse 1s infinite; }
-        
-        /* Sparkle animation */
-        @keyframes sparkle {
-            0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
-            50% { opacity: 1; transform: scale(1) rotate(180deg); }
-        }
-        .sparkle {
-            animation: sparkle 1.5s infinite;
-        }
+        body { background: #030712; color: white; overflow-x: hidden; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 20px rgba(139, 92, 246, 0.3); } 50% { box-shadow: 0 0 40px rgba(139, 92, 246, 0.6); } }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+        .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+        .draggable { position: fixed; cursor: move; user-select: none; z-index: 50; }
+        .draggable.dragging { opacity: 0.8; z-index: 100; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #1f2937; }
+        ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 3px; }
+        .task-card { transition: all 0.2s ease; }
+        .task-card:hover { transform: translateX(4px); }
+        .bot-card:hover { box-shadow: 0 0 30px rgba(139, 92, 246, 0.2); }
+        .gege-avatar { background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 50%, #3b82f6 100%); }
     </style>
 </head>
 <body class="min-h-screen p-6">
-    <!-- Header -->
-    <header class="mb-8">
-        <div class="flex items-center justify-between mb-6">
+    <header class="mb-6">
+        <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-                    <i data-lucide="sparkles" class="w-6 h-6 text-white"></i>
+                <div class="w-12 h-12 bg-gradient-to-br from-violet-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg animate-pulse-glow">
+                    <i data-lucide="bot" class="w-6 h-6 text-white"></i>
                 </div>
                 <div>
                     <h1 class="text-2xl font-bold text-white">Agent Command Center</h1>
-                    <p class="text-gray-400">Manage your AI workforce</p>
+                    <p class="text-gray-400">5 Agents Online • Task Approval System Active</p>
                 </div>
             </div>
-            
-            <div class="flex items-center gap-4">
-                <div class="flex items-center gap-2 px-4 py-2 bg-gray-800 rounded-full">
-                    <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                    <span class="text-sm text-gray-300">4 Agents Online</span>
-                </div>
-                <div class="flex items-center gap-2 px-3 py-1.5 bg-gray-800 rounded-full text-sm">
-                    <i data-lucide="file-text" class="w-4 h-4 text-emerald-400"></i>
-                    <span class="text-gray-400">Content</span>
-                </div>
-                <div class="flex items-center gap-2 px-3 py-1.5 bg-gray-800 rounded-full text-sm">
-                    <i data-lucide="palette" class="w-4 h-4 text-violet-400"></i>
-                    <span class="text-gray-400">Image</span>
-                </div>
-                <div class="flex items-center gap-2 px-3 py-1.5 bg-gray-800 rounded-full text-sm">
-                    <i data-lucide="search" class="w-4 h-4 text-amber-400"></i>
-                    <span class="text-gray-400">SEO</span>
-                </div>
-                <div class="flex items-center gap-2 px-3 py-1.5 bg-gray-800 rounded-full text-sm">
-                    <i data-lucide="globe" class="w-4 h-4 text-blue-400"></i>
-                    <span class="text-gray-400">WP</span>
-                </div>
+            <div class="flex items-center gap-3">
+                <span class="px-3 py-1.5 bg-violet-500/20 text-violet-400 rounded-full text-sm font-medium border border-violet-500/30">
+                    <i data-lucide="shield-check" class="w-4 h-4 inline mr-1"></i>
+                    Approval Mode
+                </span>
             </div>
         </div>
     </header>
 
-    <!-- Bot Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        
+    <!-- 5 Bot Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+        <!-- Gege Bot -->
+        <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 border border-violet-500/30 cursor-pointer overflow-hidden group" onclick="openGegePanel()">
+            <div class="absolute inset-0 bg-gradient-to-br from-violet-500/10 via-pink-500/10 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div class="absolute top-3 right-3">
+                <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-violet-500/20 text-violet-400 border border-violet-500/40 animate-pulse">GEGE</span>
+            </div>
+            <div class="relative z-10">
+                <h3 class="text-lg font-bold text-white mb-0.5">Gege</h3>
+                <p class="text-xs text-gray-400 mb-3">Your Personal Assistant</p>
+            </div>
+            <div class="flex justify-center py-3">
+                <div class="relative w-16 h-16 flex items-center justify-center">
+                    <div class="absolute inset-0 gege-avatar rounded-full blur-lg opacity-50 animate-pulse"></div>
+                    <div class="relative z-10 w-14 h-14 gege-avatar rounded-2xl flex items-center justify-center shadow-lg animate-float">
+                        <i data-lucide="sparkles" class="w-7 h-7 text-white"></i>
+                    </div>
+                    <div class="absolute inset-0 animate-spin" style="animation-duration: 8s;">
+                        <div class="absolute top-0 left-1/2 w-2 h-2 bg-violet-400 rounded-full -translate-x-1/2"></div>
+                    </div>
+                    <div class="absolute inset-0 animate-spin" style="animation-duration: 12s; animation-direction: reverse;">
+                        <div class="absolute bottom-0 left-1/2 w-1.5 h-1.5 bg-pink-400 rounded-full -translate-x-1/2"></div>
+                    </div>
+                </div>
+            </div>
+            <p class="text-xs text-center text-violet-400 mb-3">"Click to view your tasks"</p>
+            <div class="flex justify-center">
+                <div class="px-3 py-1.5 bg-violet-500/20 rounded-lg border border-violet-500/30">
+                    <span class="text-lg font-bold text-violet-400" id="gege-task-count">0</span>
+                    <span class="text-xs text-violet-300 ml-1">pending</span>
+                </div>
+            </div>
+        </div>
+
         <!-- WriteBot -->
-        <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 cursor-pointer overflow-hidden group">
-            <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" 
-                 style="background: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.1) 0%, transparent 70%);"></div>
-            
-            <div class="absolute top-4 right-4">
-                <span class="px-2 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 status-idle">IDLE</span>
+        <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 border border-gray-700/50 cursor-pointer overflow-hidden group">
+            <div class="absolute top-3 right-3">
+                <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40" id="writebot-status">IDLE</span>
             </div>
-            
             <div class="relative z-10">
-                <h3 class="text-xl font-bold text-white mb-0.5">WriteBot</h3>
-                <p class="text-sm text-gray-400 mb-4">Content Writer</p>
+                <h3 class="text-lg font-bold text-white mb-0.5">WriteBot</h3>
+                <p class="text-xs text-gray-400 mb-3">Content Writer</p>
             </div>
-            
-            <!-- WriteBot Avatar -->
-            <div class="flex justify-center py-4">
-                <div class="relative w-20 h-20 flex items-center justify-center">
-                    <!-- Background glow -->
+            <div class="flex justify-center py-3">
+                <div class="relative w-16 h-16 flex items-center justify-center">
                     <div class="absolute inset-0 bg-emerald-500/20 rounded-full blur-xl"></div>
-                    
-                    <!-- Floating papers -->
-                    <div class="absolute -top-2 -right-2 text-emerald-400" style="animation: paper-float-1 2s ease-in-out infinite;">
-                        <i data-lucide="file-text" class="w-5 h-5"></i>
-                    </div>
-                    <div class="absolute -top-1 -left-3 text-emerald-300" style="animation: paper-float-2 2.5s ease-in-out infinite 0.3s;">
-                        <i data-lucide="file-text" class="w-4 h-4"></i>
-                    </div>
-                    
-                    <!-- Main avatar -->
-                    <div class="relative z-10" style="animation: writebot-float 3s ease-in-out infinite;">
-                        <div class="w-16 h-16 bg-emerald-500 rounded-2xl flex items-center justify-center shadow-lg">
-                            <i data-lucide="pen" class="w-8 h-8 text-white"></i>
-                        </div>
-                        <!-- Coffee cup -->
-                        <div class="absolute -bottom-1 -right-2 bg-amber-800 rounded-lg p-1">
-                            <i data-lucide="coffee" class="w-3 h-3 text-amber-100"></i>
-                            <div class="absolute -top-3 left-1/2 -translate-x-1/2" style="animation: steam 1.5s infinite;">
-                                <div class="w-1 h-2 bg-gray-400 rounded-full"></div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Sparkles -->
-                    <div class="absolute top-0 right-0 text-yellow-400 sparkle" style="animation-delay: 0s;">
-                        <i data-lucide="sparkles" class="w-3 h-3"></i>
-                    </div>
-                    <div class="absolute bottom-4 left-0 text-yellow-400 sparkle" style="animation-delay: 0.5s;">
-                        <i data-lucide="sparkles" class="w-3 h-3"></i>
+                    <div class="relative z-10 w-14 h-14 bg-emerald-500 rounded-2xl flex items-center justify-center shadow-lg animate-float">
+                        <i data-lucide="pen-tool" class="w-7 h-7 text-white"></i>
                     </div>
                 </div>
             </div>
-            
-            <p class="text-sm text-center text-emerald-400 mb-4 h-5">Coffee's brewing, creativity flowing ☕</p>
-            
-            <div class="grid grid-cols-2 gap-3 mb-4">
-                <div class="p-3 bg-gray-900/50 rounded-xl text-center">
-                    <p class="text-xl font-bold text-emerald-400">247</p>
-                    <p class="text-xs text-gray-500 uppercase tracking-wider">Articles</p>
+            <div class="grid grid-cols-2 gap-2 mb-3">
+                <div class="p-2 bg-gray-900/50 rounded-lg text-center">
+                    <p class="text-lg font-bold text-emerald-400">247</p>
+                    <p class="text-[10px] text-gray-500 uppercase">Articles</p>
                 </div>
-                <div class="p-3 bg-gray-900/50 rounded-xl text-center">
-                    <p class="text-xl font-bold text-emerald-400">98%</p>
-                    <p class="text-xs text-gray-500 uppercase tracking-wider">SEO Score</p>
+                <div class="p-2 bg-gray-900/50 rounded-lg text-center">
+                    <p class="text-lg font-bold text-emerald-400">98%</p>
+                    <p class="text-[10px] text-gray-500 uppercase">SEO</p>
                 </div>
             </div>
-            
-            <button class="btn-shine w-full py-3 rounded-xl font-semibold text-white flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 transition-colors">
-                <i data-lucide="zap" class="w-4 h-4"></i>
-                Assign Content Task
+            <button onclick="showTaskModal('writebot')" class="w-full py-2 rounded-lg font-semibold text-white text-sm bg-emerald-500 hover:bg-emerald-600 transition-colors flex items-center justify-center gap-2">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                Add Writing Task
             </button>
         </div>
-        
+
         <!-- PixelBot -->
-        <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 cursor-pointer overflow-hidden group">
-            <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" 
-                 style="background: radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.1) 0%, transparent 70%);"></div>
-            
-            <div class="absolute top-4 right-4">
-                <span class="px-2 py-1 rounded-full text-xs font-bold bg-violet-500/20 text-violet-400 border border-violet-500/40 status-idle">IDLE</span>
+        <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 border border-gray-700/50 cursor-pointer overflow-hidden group">
+            <div class="absolute top-3 right-3">
+                <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-violet-500/20 text-violet-400 border border-violet-500/40" id="pixelbot-status">IDLE</span>
             </div>
-            
             <div class="relative z-10">
-                <h3 class="text-xl font-bold text-white mb-0.5">PixelBot</h3>
-                <p class="text-sm text-gray-400 mb-4">Image Generation</p>
+                <h3 class="text-lg font-bold text-white mb-0.5">PixelBot</h3>
+                <p class="text-xs text-gray-400 mb-3">Image Generation</p>
             </div>
-            
-            <!-- PixelBot Avatar -->
-            <div class="flex justify-center py-4">
-                <div class="relative w-20 h-20 flex items-center justify-center">
-                    <!-- Color swirl background -->
-                    <div class="absolute inset-0 rounded-full opacity-30" 
-                         style="background: conic-gradient(from 0deg, #8b5cf6, #ec4899, #3b82f6, #8b5cf6); animation: color-swirl 10s linear infinite;"></div>
-                    
-                    <!-- Color blobs -->
-                    <div class="absolute top-2 right-2 w-4 h-4 rounded-full bg-pink-500 blur-sm" style="animation: color-blob 2s infinite;"></div>
-                    <div class="absolute bottom-4 right-0 w-3 h-3 rounded-full bg-violet-400 blur-sm" style="animation: color-blob 2s infinite 0.3s;"></div>
-                    <div class="absolute top-4 left-2 w-3 h-3 rounded-full bg-blue-400 blur-sm" style="animation: color-blob 2s infinite 0.6s;"></div>
-                    
-                    <!-- Main avatar -->
-                    <div class="relative z-10" style="animation: pixelbot-float 3s ease-in-out infinite;">
-                        <div class="w-16 h-16 bg-violet-500 rounded-2xl flex items-center justify-center shadow-lg">
-                            <i data-lucide="palette" class="w-8 h-8 text-white"></i>
-                        </div>
-                        <!-- Paintbrush -->
-                        <div class="absolute -bottom-2 -right-3" style="animation: writebot-float 1s ease-in-out infinite;">
-                            <div class="bg-amber-700 rounded-lg p-1.5 shadow-md">
-                                <div class="w-1 h-4 bg-amber-200 rounded-t"></div>
-                            </div>
-                        </div>
+            <div class="flex justify-center py-3">
+                <div class="relative w-16 h-16 flex items-center justify-center">
+                    <div class="absolute inset-0 bg-violet-500/20 rounded-full blur-xl"></div>
+                    <div class="relative z-10 w-14 h-14 bg-violet-500 rounded-2xl flex items-center justify-center shadow-lg animate-float" style="animation-delay: 0.5s;">
+                        <i data-lucide="image" class="w-7 h-7 text-white"></i>
                     </div>
                 </div>
             </div>
-            
-            <p class="text-sm text-center text-violet-400 mb-4 h-5">Mixing the perfect palette... 🎨</p>
-            
-            <div class="grid grid-cols-2 gap-3 mb-4">
-                <div class="p-3 bg-gray-900/50 rounded-xl text-center">
-                    <p class="text-xl font-bold text-violet-400">1.2k</p>
-                    <p class="text-xs text-gray-500 uppercase tracking-wider">Images</p>
+            <div class="grid grid-cols-2 gap-2 mb-3">
+                <div class="p-2 bg-gray-900/50 rounded-lg text-center">
+                    <p class="text-lg font-bold text-violet-400">1.2k</p>
+                    <p class="text-[10px] text-gray-500 uppercase">Images</p>
                 </div>
-                <div class="p-3 bg-gray-900/50 rounded-xl text-center">
-                    <p class="text-xl font-bold text-violet-400">4s</p>
-                    <p class="text-xs text-gray-500 uppercase tracking-wider">Avg Gen</p>
+                <div class="p-2 bg-gray-900/50 rounded-lg text-center">
+                    <p class="text-lg font-bold text-violet-400">4s</p>
+                    <p class="text-[10px] text-gray-500 uppercase">Avg</p>
                 </div>
             </div>
-            
-            <button class="btn-shine w-full py-3 rounded-xl font-semibold text-white flex items-center justify-center gap-2 bg-violet-500 hover:bg-violet-600 transition-colors">
-                <i data-lucide="zap" class="w-4 h-4"></i>
-                Generate Image
+            <button onclick="showTaskModal('pixelbot')" class="w-full py-2 rounded-lg font-semibold text-white text-sm bg-violet-500 hover:bg-violet-600 transition-colors flex items-center justify-center gap-2">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                Add Image Task
             </button>
         </div>
-        
+
         <!-- KeyBot -->
-        <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 cursor-pointer overflow-hidden group">
-            <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" 
-                 style="background: radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.1) 0%, transparent 70%);"></div>
-            
-            <div class="absolute top-4 right-4">
-                <span class="px-2 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-400 border border-amber-500/40 status-idle">IDLE</span>
+        <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 border border-gray-700/50 cursor-pointer overflow-hidden group">
+            <div class="absolute top-3 right-3">
+                <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-amber-500/20 text-amber-400 border border-amber-500/40" id="keybot-status">IDLE</span>
             </div>
-            
             <div class="relative z-10">
-                <h3 class="text-xl font-bold text-white mb-0.5">KeyBot</h3>
-                <p class="text-sm text-gray-400 mb-4">Keyword Mapper</p>
+                <h3 class="text-lg font-bold text-white mb-0.5">KeyBot</h3>
+                <p class="text-xs text-gray-400 mb-3">Keyword Mapper</p>
             </div>
-            
-            <!-- KeyBot Avatar -->
-            <div class="flex justify-center py-4">
-                <div class="relative w-20 h-20 flex items-center justify-center">
-                    <!-- Grid background -->
-                    <div class="absolute inset-0 rounded-full opacity-20" 
-                         style="background-image: linear-gradient(rgba(245, 158, 11, 0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(245, 158, 11, 0.2) 1px, transparent 1px); background-size: 10px 10px;"></div>
-                    
-                    <!-- Data nodes -->
-                    <div class="absolute top-3 left-3 w-3 h-3 rounded-full border-2 border-amber-500" style="animation: node-pulse 1.5s infinite;"></div>
-                    <div class="absolute top-3 right-3 w-3 h-3 rounded-full border-2 border-amber-500" style="animation: node-pulse 1.5s infinite 0.3s;"></div>
-                    <div class="absolute bottom-3 left-3 w-3 h-3 rounded-full border-2 border-amber-500" style="animation: node-pulse 1.5s infinite 0.6s;"></div>
-                    <div class="absolute bottom-3 right-3 w-3 h-3 rounded-full border-2 border-amber-500" style="animation: node-pulse 1.5s infinite 0.9s;"></div>
-                    
-                    <!-- Connection lines -->
-                    <svg class="absolute inset-0 w-full h-full pointer-events-none opacity-50">
-                        <line x1="30%" y1="30%" x2="70%" y2="30%" stroke="#f59e0b" stroke-width="1" stroke-dasharray="4 4" style="animation: data-flow 1s linear infinite;"></line>
-                        <line x1="30%" y1="70%" x2="70%" y2="70%" stroke="#f59e0b" stroke-width="1" stroke-dasharray="4 4" style="animation: data-flow 1s linear infinite 0.3s;"></line>
-                    </svg>
-                    
-                    <!-- Main avatar -->
-                    <div class="relative z-10" style="animation: keybot-float 2s ease-in-out infinite;">
-                        <div class="w-16 h-16 bg-amber-500 rounded-2xl flex items-center justify-center shadow-lg">
-                            <i data-lucide="search" class="w-8 h-8 text-white"></i>
-                        </div>
+            <div class="flex justify-center py-3">
+                <div class="relative w-16 h-16 flex items-center justify-center">
+                    <div class="absolute inset-0 bg-amber-500/20 rounded-full blur-xl"></div>
+                    <div class="relative z-10 w-14 h-14 bg-amber-500 rounded-2xl flex items-center justify-center shadow-lg animate-float" style="animation-delay: 1s;">
+                        <i data-lucide="search" class="w-7 h-7 text-white"></i>
                     </div>
                 </div>
             </div>
-            
-            <p class="text-sm text-center text-amber-400 mb-4 h-5">Analyzing patterns... fascinating 📊</p>
-            
-            <div class="grid grid-cols-2 gap-3 mb-4">
-                <div class="p-3 bg-gray-900/50 rounded-xl text-center">
-                    <p class="text-xl font-bold text-amber-400">8.5k</p>
-                    <p class="text-xs text-gray-500 uppercase tracking-wider">Keywords</p>
+            <div class="grid grid-cols-2 gap-2 mb-3">
+                <div class="p-2 bg-gray-900/50 rounded-lg text-center">
+                    <p class="text-lg font-bold text-amber-400">8.5k</p>
+                    <p class="text-[10px] text-gray-500 uppercase">Keywords</p>
                 </div>
-                <div class="p-3 bg-gray-900/50 rounded-xl text-center">
-                    <p class="text-xl font-bold text-amber-400">92%</p>
-                    <p class="text-xs text-gray-500 uppercase tracking-wider">Accuracy</p>
+                <div class="p-2 bg-gray-900/50 rounded-lg text-center">
+                    <p class="text-lg font-bold text-amber-400">92%</p>
+                    <p class="text-[10px] text-gray-500 uppercase">Accuracy</p>
                 </div>
             </div>
-            
-            <button class="btn-shine w-full py-3 rounded-xl font-semibold text-white flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 transition-colors">
-                <i data-lucide="zap" class="w-4 h-4"></i>
-                Map Keywords
+            <button onclick="showTaskModal('keybot')" class="w-full py-2 rounded-lg font-semibold text-white text-sm bg-amber-500 hover:bg-amber-600 transition-colors flex items-center justify-center gap-2">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                Add SEO Task
             </button>
         </div>
-        
+
         <!-- PressBot -->
-        <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 cursor-pointer overflow-hidden group">
-            <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" 
-                 style="background: radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.1) 0%, transparent 70%);"></div>
-            
-            <div class="absolute top-4 right-4">
-                <span class="px-2 py-1 rounded-full text-xs font-bold bg-blue-500/20 text-blue-400 border border-blue-500/40 status-idle">IDLE</span>
+        <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 border border-gray-700/50 cursor-pointer overflow-hidden group">
+            <div class="absolute top-3 right-3">
+                <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-blue-500/20 text-blue-400 border border-blue-500/40" id="pressbot-status">IDLE</span>
             </div>
-            
             <div class="relative z-10">
-                <h3 class="text-xl font-bold text-white mb-0.5">PressBot</h3>
-                <p class="text-sm text-gray-400 mb-4">WordPress Autopost</p>
+                <h3 class="text-lg font-bold text-white mb-0.5">PressBot</h3>
+                <p class="text-xs text-gray-400 mb-3">WordPress Publisher</p>
             </div>
-            
-            <!-- PressBot Avatar -->
-            <div class="flex justify-center py-4">
-                <div class="relative w-20 h-20 flex items-center justify-center">
-                    <!-- Launch pad glow -->
-                    <div class="absolute inset-0 bg-blue-500/30 rounded-full blur-xl" style="animation: working-pulse 2s infinite;"></div>
-                    
-                    <!-- Exhaust particles -->
-                    <div class="absolute bottom-2 left-1/2 -translate-x-1/2">
-                        <div class="absolute w-2 h-2 rounded-full bg-orange-400" style="animation: exhaust 0.8s infinite;"></div>
-                        <div class="absolute w-2 h-2 rounded-full bg-red-400" style="animation: exhaust 0.8s infinite 0.1s; left: 5px;"></div>
-                        <div class="absolute w-2 h-2 rounded-full bg-yellow-400" style="animation: exhaust 0.8s infinite 0.2s; left: -5px;"></div>
-                    </div>
-                    
-                    <!-- Main avatar -->
-                    <div class="relative z-10" style="animation: pressbot-float 2s ease-in-out infinite;">
-                        <div class="w-16 h-16 bg-blue-500 rounded-2xl flex items-center justify-center shadow-lg">
-                            <i data-lucide="rocket" class="w-8 h-8 text-white"></i>
-                        </div>
-                        <!-- Flying newspaper -->
-                        <div class="absolute -top-2 -right-4 bg-white rounded shadow-md p-1" style="animation: paper-float-1 2s ease-in-out infinite;">
-                            <div class="w-4 h-5 bg-gray-200 rounded-sm"></div>
-                        </div>
-                    </div>
-                    
-                    <!-- Globe -->
-                    <div class="absolute -bottom-1 -left-2 text-blue-400" style="animation: globe-spin 8s linear infinite;">
-                        <i data-lucide="globe" class="w-4 h-4"></i>
+            <div class="flex justify-center py-3">
+                <div class="relative w-16 h-16 flex items-center justify-center">
+                    <div class="absolute inset-0 bg-blue-500/20 rounded-full blur-xl"></div>
+                    <div class="relative z-10 w-14 h-14 bg-blue-500 rounded-2xl flex items-center justify-center shadow-lg animate-float" style="animation-delay: 1.5s;">
+                        <i data-lucide="rocket" class="w-7 h-7 text-white"></i>
                     </div>
                 </div>
             </div>
-            
-            <p class="text-sm text-center text-blue-400 mb-4 h-5">Ready to launch! 🚀</p>
-            
-            <div class="grid grid-cols-2 gap-3 mb-4">
-                <div class="p-3 bg-gray-900/50 rounded-xl text-center">
-                    <p class="text-xl font-bold text-blue-400">432</p>
-                    <p class="text-xs text-gray-500 uppercase tracking-wider">Posts</p>
+            <div class="grid grid-cols-2 gap-2 mb-3">
+                <div class="p-2 bg-gray-900/50 rounded-lg text-center">
+                    <p class="text-lg font-bold text-blue-400">432</p>
+                    <p class="text-[10px] text-gray-500 uppercase">Posts</p>
                 </div>
-                <div class="p-3 bg-gray-900/50 rounded-xl text-center">
-                    <p class="text-xl font-bold text-blue-400">12</p>
-                    <p class="text-xs text-gray-500 uppercase tracking-wider">Sites</p>
+                <div class="p-2 bg-gray-900/50 rounded-lg text-center">
+                    <p class="text-lg font-bold text-blue-400">12</p>
+                    <p class="text-[10px] text-gray-500 uppercase">Sites</p>
                 </div>
             </div>
-            
-            <button class="btn-shine w-full py-3 rounded-xl font-semibold text-white flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 transition-colors">
-                <i data-lucide="zap" class="w-4 h-4"></i>
-                Publish to WP
+            <button onclick="showTaskModal('pressbot')" class="w-full py-2 rounded-lg font-semibold text-white text-sm bg-blue-500 hover:bg-blue-600 transition-colors flex items-center justify-center gap-2">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                Add Publish Task
             </button>
         </div>
-        
     </div>
-    
-    <!-- Activity Log -->
-    <div class="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50">
-        <div class="flex items-center gap-2 mb-4">
-            <i data-lucide="activity" class="w-5 h-5 text-gray-400"></i>
-            <h3 class="text-lg font-semibold text-white">Activity Log</h3>
+
+    <!-- Draggable Activity Log -->
+    <div id="activity-log" class="draggable bg-gray-800/90 backdrop-blur-md rounded-xl border border-gray-700/50 shadow-2xl" style="bottom: 20px; right: 20px; width: 380px; max-height: 400px;">
+        <div class="drag-handle flex items-center justify-between p-3 border-b border-gray-700/50 cursor-move bg-gray-700/30 rounded-t-xl">
+            <div class="flex items-center gap-2">
+                <i data-lucide="grip-vertical" class="w-4 h-4 text-gray-500"></i>
+                <span class="font-semibold text-sm text-white">Activity Log</span>
+                <span class="px-2 py-0.5 bg-violet-500/20 text-violet-400 rounded text-xs" id="activity-count">0</span>
+            </div>
+            <div class="flex items-center gap-1">
+                <button onclick="minimizeLog()" class="p-1 hover:bg-gray-600 rounded">
+                    <i data-lucide="minus" class="w-4 h-4 text-gray-400"></i>
+                </button>
+                <button onclick="toggleLog()" class="p-1 hover:bg-gray-600 rounded">
+                    <i data-lucide="x" class="w-4 h-4 text-gray-400"></i>
+                </button>
+            </div>
         </div>
-        
-        <div class="text-center py-8 text-gray-500">
-            <i data-lucide="clock" class="w-8 h-8 mx-auto mb-2 opacity-50"></i>
-            <p class="text-sm">No recent activity</p>
+        <div id="log-content" class="p-3 overflow-y-auto" style="max-height: 320px;">
+            <div id="activity-list" class="space-y-2">
+                <div class="text-center py-8 text-gray-500">
+                    <i data-lucide="inbox" class="w-8 h-8 mx-auto mb-2 opacity-50"></i>
+                    <p class="text-sm">No activity yet</p>
+                </div>
+            </div>
         </div>
     </div>
-    
+
+    <!-- Gege Task Panel -->
+    <div id="gege-panel" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center">
+        <div class="bg-gray-800 rounded-2xl border border-violet-500/30 w-full max-w-4xl max-h-[80vh] overflow-hidden shadow-2xl m-4">
+            <div class="p-4 border-b border-gray-700/50 flex items-center justify-between bg-gradient-to-r from-violet-500/10 to-pink-500/10">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 gege-avatar rounded-xl flex items-center justify-center">
+                        <i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-white">Gege's Task Board</h2>
+                        <p class="text-sm text-gray-400">Manage and approve tasks for your agents</p>
+                    </div>
+                </div>
+                <button onclick="closeGegePanel()" class="p-2 hover:bg-gray-700 rounded-lg">
+                    <i data-lucide="x" class="w-5 h-5 text-gray-400"></i>
+                </button>
+            </div>
+            
+            <div class="p-4 border-b border-gray-700/50">
+                <div class="flex gap-2">
+                    <input type="text" id="new-task-input" placeholder="Describe what you need... (e.g., 'Write a blog post about AI')" 
+                           class="flex-1 px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-violet-500">
+                    <button onclick="addTask()" class="px-4 py-2 bg-violet-500 hover:bg-violet-600 rounded-lg font-semibold text-white flex items-center gap-2">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                        Add Task
+                    </button>
+                </div>
+                <p class="text-xs text-gray-500 mt-2">
+                    <i data-lucide="info" class="w-3 h-3 inline mr-1"></i>
+                    Gege will automatically categorize tasks. You approve before agents start working.
+                </p>
+            </div>
+            
+            <div class="p-4 overflow-y-auto" style="max-height: 50vh;">
+                <div class="mb-6">
+                    <h3 class="text-sm font-semibold text-amber-400 mb-3 flex items-center gap-2">
+                        <i data-lucide="clock" class="w-4 h-4"></i>
+                        Pending Approval
+                        <span class="px-2 py-0.5 bg-amber-500/20 rounded text-xs" id="pending-count">0</span>
+                    </h3>
+                    <div id="pending-tasks" class="space-y-2">
+                        <p class="text-sm text-gray-500 italic">No pending tasks</p>
+                    </div>
+                </div>
+                
+                <div class="mb-6">
+                    <h3 class="text-sm font-semibold text-blue-400 mb-3 flex items-center gap-2">
+                        <i data-lucide="loader" class="w-4 h-4"></i>
+                        In Progress
+                        <span class="px-2 py-0.5 bg-blue-500/20 rounded text-xs" id="progress-count">0</span>
+                    </h3>
+                    <div id="progress-tasks" class="space-y-2">
+                        <p class="text-sm text-gray-500 italic">No tasks in progress</p>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-sm font-semibold text-emerald-400 mb-3 flex items-center gap-2">
+                        <i data-lucide="check-circle" class="w-4 h-4"></i>
+                        Completed
+                        <span class="px-2 py-0.5 bg-emerald-500/20 rounded text-xs" id="completed-count">0</span>
+                    </h3>
+                    <div id="completed-tasks" class="space-y-2">
+                        <p class="text-sm text-gray-500 italic">No completed tasks</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Task Modal -->
+    <div id="task-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center">
+        <div class="bg-gray-800 rounded-2xl border border-gray-700 w-full max-w-md m-4 p-6">
+            <h3 class="text-xl font-bold text-white mb-4" id="modal-title">Add Task</h3>
+            <textarea id="task-description" rows="3" placeholder="Describe the task..." 
+                      class="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 resize-none focus:outline-none focus:border-violet-500 mb-4"></textarea>
+            <div class="flex gap-2">
+                <button onclick="closeTaskModal()" class="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-white">Cancel</button>
+                <button onclick="submitTask()" class="flex-1 px-4 py-2 bg-violet-500 hover:bg-violet-600 rounded-lg text-white font-semibold">Add to Gege</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         lucide.createIcons();
+        
+        let tasks = [];
+        let currentBot = null;
+        let taskIdCounter = 1;
+        
+        // Draggable
+        const draggable = document.getElementById('activity-log');
+        const dragHandle = draggable.querySelector('.drag-handle');
+        let isDragging = false;
+        let currentX, currentY, initialX, initialY;
+        let xOffset = 0, yOffset = 0;
+        
+        dragHandle.addEventListener('mousedown', dragStart);
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('mouseup', dragEnd);
+        
+        function dragStart(e) {
+            initialX = e.clientX - xOffset;
+            initialY = e.clientY - yOffset;
+            if (e.target.closest('.drag-handle')) {
+                isDragging = true;
+                draggable.classList.add('dragging');
+            }
+        }
+        
+        function drag(e) {
+            if (isDragging) {
+                e.preventDefault();
+                currentX = e.clientX - initialX;
+                currentY = e.clientY - initialY;
+                xOffset = currentX;
+                yOffset = currentY;
+                draggable.style.transform = `translate(${currentX}px, ${currentY}px)`;
+            }
+        }
+        
+        function dragEnd(e) {
+            initialX = draggable.getBoundingClientRect().left;
+            initialY = draggable.getBoundingClientRect().top;
+            xOffset = 0;
+            yOffset = 0;
+            draggable.style.transform = 'none';
+            draggable.style.left = initialX + 'px';
+            draggable.style.top = initialY + 'px';
+            draggable.style.bottom = 'auto';
+            draggable.style.right = 'auto';
+            isDragging = false;
+            draggable.classList.remove('dragging');
+        }
+        
+        function minimizeLog() {
+            const content = document.getElementById('log-content');
+            content.style.display = content.style.display === 'none' ? 'block' : 'none';
+        }
+        
+        function toggleLog() {
+            draggable.style.display = draggable.style.display === 'none' ? 'block' : 'none';
+        }
+        
+        function openGegePanel() {
+            document.getElementById('gege-panel').classList.remove('hidden');
+            renderTasks();
+        }
+        
+        function closeGegePanel() {
+            document.getElementById('gege-panel').classList.add('hidden');
+        }
+        
+        function showTaskModal(bot) {
+            currentBot = bot;
+            const botNames = {
+                'writebot': 'WriteBot - Content Writing',
+                'pixelbot': 'PixelBot - Image Generation',
+                'keybot': 'KeyBot - Keyword Research',
+                'pressbot': 'PressBot - WordPress Publishing'
+            };
+            document.getElementById('modal-title').textContent = 'Add Task for ' + botNames[bot];
+            document.getElementById('task-modal').classList.remove('hidden');
+        }
+        
+        function closeTaskModal() {
+            document.getElementById('task-modal').classList.add('hidden');
+            document.getElementById('task-description').value = '';
+            currentBot = null;
+        }
+        
+        function submitTask() {
+            const description = document.getElementById('task-description').value;
+            if (description.trim()) {
+                addTaskToGege(description, currentBot);
+                closeTaskModal();
+            }
+        }
+        
+        function addTask() {
+            const input = document.getElementById('new-task-input');
+            const description = input.value;
+            if (description.trim()) {
+                addTaskToGege(description);
+                input.value = '';
+            }
+        }
+        
+        function addTaskToGege(description, suggestedBot = null) {
+            let assignedBot = suggestedBot;
+            let category = 'general';
+            const lowerDesc = description.toLowerCase();
+            
+            if (!assignedBot) {
+                if (lowerDesc.includes('write') || lowerDesc.includes('blog') || lowerDesc.includes('article') || lowerDesc.includes('content') || lowerDesc.includes('copy')) {
+                    assignedBot = 'writebot';
+                    category = 'writing';
+                } else if (lowerDesc.includes('image') || lowerDesc.includes('picture') || lowerDesc.includes('photo') || lowerDesc.includes('generate') || lowerDesc.includes('draw')) {
+                    assignedBot = 'pixelbot';
+                    category = 'image';
+                } else if (lowerDesc.includes('keyword') || lowerDesc.includes('seo') || lowerDesc.includes('search') || lowerDesc.includes('rank')) {
+                    assignedBot = 'keybot';
+                    category = 'seo';
+                } else if (lowerDesc.includes('publish') || lowerDesc.includes('post') || lowerDesc.includes('wordpress') || lowerDesc.includes('wp')) {
+                    assignedBot = 'pressbot';
+                    category = 'publishing';
+                } else {
+                    assignedBot = 'writebot';
+                    category = 'writing';
+                }
+            }
+            
+            const botNames = {
+                'writebot': 'WriteBot',
+                'pixelbot': 'PixelBot',
+                'keybot': 'KeyBot',
+                'pressbot': 'PressBot'
+            };
+            
+            const task = {
+                id: taskIdCounter++,
+                description: description,
+                bot: assignedBot,
+                botName: botNames[assignedBot],
+                category: category,
+                status: 'pending',
+                createdAt: new Date()
+            };
+            
+            tasks.push(task);
+            renderTasks();
+            addActivity(`New task added to Gege: "${description.substring(0, 30)}..."`);
+            
+            const pendingCount = tasks.filter(t => t.status === 'pending').length;
+            document.getElementById('gege-task-count').textContent = pendingCount;
+        }
+        
+        function renderTasks() {
+            const pendingContainer = document.getElementById('pending-tasks');
+            const progressContainer = document.getElementById('progress-tasks');
+            const completedContainer = document.getElementById('completed-tasks');
+            
+            const pending = tasks.filter(t => t.status === 'pending');
+            const inProgress = tasks.filter(t => t.status === 'approved');
+            const completed = tasks.filter(t => t.status === 'completed');
+            
+            document.getElementById('pending-count').textContent = pending.length;
+            document.getElementById('progress-count').textContent = inProgress.length;
+            document.getElementById('completed-count').textContent = completed.length;
+            document.getElementById('gege-task-count').textContent = pending.length;
+            
+            if (pending.length === 0) {
+                pendingContainer.innerHTML = '<p class="text-sm text-gray-500 italic">No pending tasks</p>';
+            } else {
+                pendingContainer.innerHTML = pending.map(task => `
+                    <div class="task-card bg-gray-900/50 border border-amber-500/30 rounded-lg p-3">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <p class="text-sm text-white mb-1">${task.description}</p>
+                                <div class="flex items-center gap-2">
+                                    <span class="px-2 py-0.5 bg-gray-700 rounded text-xs text-gray-300">${task.botName}</span>
+                                    <span class="px-2 py-0.5 bg-amber-500/20 text-amber-400 rounded text-xs">Pending</span>
+                                </div>
+                            </div>
+                            <button onclick="approveTask(${task.id})" class="ml-2 px-3 py-1 bg-emerald-500 hover:bg-emerald-600 rounded text-xs font-semibold text-white flex items-center gap-1">
+                                <i data-lucide="check" class="w-3 h-3"></i>
+                                Approve
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            if (inProgress.length === 0) {
+                progressContainer.innerHTML = '<p class="text-sm text-gray-500 italic">No tasks in progress</p>';
+            } else {
+                progressContainer.innerHTML = inProgress.map(task => `
+                    <div class="task-card bg-gray-900/50 border border-blue-500/30 rounded-lg p-3">
+                        <div class="flex items-center gap-2">
+                            <div class="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+                            <p class="text-sm text-white">${task.description}</p>
+                        </div>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="px-2 py-0.5 bg-gray-700 rounded text-xs text-gray-300">${task.botName}</span>
+                            <span class="px-2 py-0.5 bg-blue-500/20 text-blue-400 rounded text-xs">Working...</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            if (completed.length === 0) {
+                completedContainer.innerHTML = '<p class="text-sm text-gray-500 italic">No completed tasks</p>';
+            } else {
+                completedContainer.innerHTML = completed.map(task => `
+                    <div class="task-card bg-gray-900/50 border border-emerald-500/30 rounded-lg p-3 opacity-60">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+                            <p class="text-sm text-white line-through">${task.description}</p>
+                        </div>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="px-2 py-0.5 bg-gray-700 rounded text-xs text-gray-300">${task.botName}</span>
+                            <span class="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 rounded text-xs">Done</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            lucide.createIcons();
+        }
+        
+        function approveTask(taskId) {
+            const task = tasks.find(t => t.id === taskId);
+            if (task) {
+                task.status = 'approved';
+                renderTasks();
+                addActivity(`Task approved! ${task.botName} is now working on: "${task.description.substring(0, 25)}..."`);
+                
+                document.getElementById(task.bot + '-status').textContent = 'WORKING';
+                document.getElementById(task.bot + '-status').className = 'px-2 py-0.5 rounded-full text-xs font-bold bg-blue-500/20 text-blue-400 border border-blue-500/40';
+                
+                setTimeout(() => {
+                    task.status = 'completed';
+                    renderTasks();
+                    addActivity(`${task.botName} completed: "${task.description.substring(0, 25)}..."`);
+                    document.getElementById(task.bot + '-status').textContent = 'IDLE';
+                    document.getElementById(task.bot + '-status').className = 'px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40';
+                }, 5000);
+            }
+        }
+        
+        function addActivity(message) {
+            const list = document.getElementById('activity-list');
+            const emptyState = list.querySelector('.text-center');
+            if (emptyState) {
+                emptyState.remove();
+            }
+            
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const item = document.createElement('div');
+            item.className = 'flex items-center gap-3 p-2 bg-gray-900/50 rounded-lg text-sm';
+            item.innerHTML = `
+                <span class="text-gray-500 text-xs">${time}</span>
+                <span class="text-gray-300">${message}</span>
+            `;
+            list.insertBefore(item, list.firstChild);
+            
+            const count = list.children.length;
+            document.getElementById('activity-count').textContent = count;
+        }
+        
+        document.getElementById('gege-panel').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closeGegePanel();
+        });
+        document.getElementById('task-modal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closeTaskModal();
+        });
+        document.getElementById('new-task-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addTask();
+        });
     </script>
 </body>
 </html>
-<!-- Updated: Fri Feb 20 07:27:54 AM CST 2026 -->
-<!-- Deploy: 1771544352 -->
