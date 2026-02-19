@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gege Skills Directory</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --surface: #12121a;
+            --surface-hover: #1a1a25;
+            --accent: #6366f1;
+            --accent-glow: rgba(99, 102, 241, 0.3);
+            --text: #ffffff;
+            --text-muted: #6b7280;
+            --border: rgba(255,255,255,0.06);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        .ambient {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        
+        .ambient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.4;
+        }
+        
+        .orb-1 {
+            width: 600px; height: 600px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            top: -200px; right: -100px;
+            animation: float 20s ease-in-out infinite;
+        }
+        
+        .orb-2 {
+            width: 400px; height: 400px;
+            background: linear-gradient(135deg, #ec4899, #f43f5e);
+            bottom: -100px; left: -100px;
+            animation: float 25s ease-in-out infinite reverse;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(30px, -30px) scale(1.1); }
+        }
+
+        .app {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 48px 24px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+        
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 100px;
+            font-size: 0.875rem;
+            color: var(--accent);
+            margin-bottom: 24px;
+        }
+        
+        .header-title {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #fff, #a5b4fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .header-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            margin-bottom: 64px;
+        }
+        
+        .stat { text-align: center; }
+        .stat-value { font-size: 3rem; font-weight: 800; color: var(--accent); }
+        .stat-label { color: var(--text-muted); font-size: 0.875rem; text-transform: uppercase; letter-spacing: 1px; }
+
+        .search-container { max-width: 600px; margin: 0 auto 48px; }
+        
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px 20px;
+        }
+        
+        .search-box input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text);
+            font-size: 1rem;
+            outline: none;
+        }
+        
+        .search-box input::placeholder { color: var(--text-muted); }
+
+        .categories {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 48px;
+            flex-wrap: wrap;
+        }
+        
+        .category-btn {
+            padding: 10px 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .category-btn:hover, .category-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+        }
+        
+        .skill-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 28px;
+            transition: all 0.3s;
+        }
+        
+        .skill-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+        
+        .skill-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .skill-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--accent), #8b5cf6);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .skill-name { font-size: 1.125rem; font-weight: 600; }
+        .skill-category { font-size: 0.75rem; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+        .skill-desc { color: var(--text-muted); font-size: 0.9375rem; line-height: 1.6; margin-bottom: 20px; }
+        
+        .skill-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .skill-tag {
+            padding: 6px 12px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 8px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 80px;
+            padding-top: 40px;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 768px) {
+            .header-title { font-size: 2.5rem; }
+            .stats { flex-direction: column; gap: 24px; }
+            .skills-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="ambient">
+        <div class="ambient-orb orb-1"></div>
+        <div class="ambient-orb orb-2"></div>
+    </div>
+
+    <div class="app">
+        <header class="header">
+            <div class="header-badge">🌸 Gege AI Assistant</div>
+            <h1 class="header-title">Skills Directory</h1>
+            <p class="header-subtitle">Complete collection of tools and capabilities available through OpenClaw</p>
+        </header>
+
+        <div class="stats">
+            <div class="stat"><div class="stat-value">50+</div><div class="stat-label">Total Skills</div></div>
+            <div class="stat"><div class="stat-value">12</div><div class="stat-label">Categories</div></div>
+            <div class="stat"><div class="stat-value">3</div><div class="stat-label">Custom</div></div>
+        </div>
+
+        <div class="search-container">
+            <div class="search-box">
+                <span>🔍</span>
+                <input type="text" id="search" placeholder="Search skills...">
+            </div>
+        </div>
+
+        <div class="categories">
+            <button class="category-btn active" data-category="all">All</button>
+            <button class="category-btn" data-category="productivity">Productivity</button>
+            <button class="category-btn" data-category="communication">Communication</button>
+            <button class="category-btn" data-category="media">Media</button>
+            <button class="category-btn" data-category="development">Development</button>
+            <button class="category-btn" data-category="custom">Custom</button>
+        </div>
+
+        <div class="skills-grid" id="skillsGrid">
+            <!-- Custom Skills -->
+            <div class="skill-card" data-category="custom">
+                <div class="skill-header">
+                    <div class="skill-icon">🎨</div>
+                    <div>
+                        <div class="skill-name">UI Designer</div>
+                        <div class="skill-category">Custom</div>
+                    </div>
+                </div>
+                <div class="skill-desc">Design beautiful interfaces using Material You, Minimalism, Glassmorphism, and more.</div>
+                <div class="skill-tags">
+                    <span class="skill-tag">Design</span>
+                    <span class="skill-tag">CSS</span>
+                    <span class="skill-tag">UI/UX</span>
+                </div>
+            </div>
+
+            <div class="skill-card" data-category="custom">
+                <div class="skill-header">
+                    <div class="skill-icon">🖼️</div>
+                    <div>
+                        <div class="skill-name">Antigravity Image Gen</div>
+                        <div class="skill-category">Custom</div>
+                    </div>
+                </div>
+                <div class="skill-desc">Generate high-quality images using Google Antigravity API (Gemini 3 Pro Image).</div>
+                <div class="skill-tags">
+                    <span class="skill-tag">AI</span>
+                    <span class="skill-tag">Images</span>
+                </div>
+            </div>
+
+            <div class="skill-card" data-category="custom">
+                <div class="skill-header">
+                    <div class="skill-icon">📋</div>
+                    <div>
+                        <div class="skill-name">Notion API</div>
+                        <div class="skill-category">Custom</div>
+                    </div>
+                </div>
+                <div class="skill-desc">Generic Notion API CLI for search, querying databases, and creating pages.</div>
+                <div class="skill-tags">
+                    <span class="skill-tag">Notion</span>
+                    <span class="skill-tag">Database</span>
+                </div>
+            </div>
+
+            <!-- Productivity -->
+            <div class="skill-card" data-category="productivity">
+                <div class="skill-header">
+                    <div class="skill-icon">📝</div>
+                    <div>
+                        <div class="skill-name">Notion</div>
+                        <div class="skill-category">Productivity</div>
+                    </div>
+                </div>
+                <div class="skill-desc">Full Notion integration for pages, databases, and workspace management.</div>
+                <div class="skill-tags">
+                    <span class="skill-tag">Notes</span>
+                    <span class="skill-tag">Wiki</span>
+                </div>
+            </div>
+
+            <div class="skill-card" data-category="productivity">
+                <div class="skill-header">
+                    <div class="skill-icon">✅</div>
+                    <div>
+                        <div class="skill-name">Trello</div>
+                        <div class="skill-category">Productivity</div>
+                    </div>
+                </div>
+                <div class="skill-desc">Kanban board management. Create cards, move tasks between lists.</div>
+                <div class="skill-tags">
+                    <span class="skill-tag">Kanban</span>
+                    <span class="skill-tag">Project Management</span>
+                </div>
+            </div>
+
+            <!-- Communication -->
+            <div class="skill-card" data-category="communication">
+                <div class="skill-header">
+                    <div class="skill-icon">💬</div>
+                    <div>
+                        <div class="skill-name">Discord</div>
+                        <div class="skill-category">Communication</div>
+                    </div>
+                </div>
+                <div class="skill-desc">Send messages, manage channels, and interact with Discord servers.</div>
+                <div class="skill-tags">
+                    <span class="skill-tag">Chat</span>
+                    <span class="skill-tag">Community</span>
+                </div>
+            </div>
+
+            <div class="skill-card" data-category="communication">
+                <div class="skill-header">
+                    <div class="skill-icon">💬</div>
+                    <div>
+                        <div class="skill-name">Slack</div>
+                        <div class="skill-category">Communication</div>
+                    </div>
+                </div>
+                <div class="skill-desc">Post messages to channels, manage workspaces, and automate Slack workflows.</div>
+                <div class="skill-tags">
+                    <span class="skill-tag">Chat</span>
+                    <span class="skill-tag">Workplace</span>
+                </div>
+            </div>
+
+            <!-- Media -->
+            <div class="skill-card" data-category="media">
+                <div class="skill-header">
+                    <div class="skill-icon">🎵</div>
+                    <div>
+                        <div class="skill-name">Spotify</div>
+                        <div class="skill-category">Media</div>
+                    </div>
+                </div>
+                <div class="skill-desc">Control playback, manage playlists, and search for music.</div>
+                <div class="skill-tags">
+                    <span class="skill-tag">Music</span>
+                    <span class="skill-tag">Streaming</span>
+                </div>
+            </div>
+
+            <div class="skill-card" data-category="media">
+                <div class="skill-header">
+                    <div class="skill-icon">🎨</div>
+                    <div>
+                        <div class="skill-name">OpenAI Image Gen</div>
+                        <div class="skill-category">Media</div>
+                    </div>
+                </div>
+                <div class="skill-desc">Generate images using DALL-E. Create artwork and visual content.</div>
+                <div class="skill-tags">
+                    <span class="skill-tag">AI</span>
+                    <span class="skill-tag">Images</span>
+                </div>
+            </div>
+
+            <!-- Development -->
+            <div class="skill-card" data-category="development">
+                <div class="skill-header">
+                    <div class="skill-icon">🐙</div>
+                    <div>
+                        <div class="skill-name">GitHub</div>
+                        <div class="skill-category">Development</div>
+                    </div>
+                </div>
+                <div class="skill-desc">Repository management, issue tracking, and code review.</div>
+                <div class="skill-tags">
+                    <span class="skill-tag">Git</span>
+                    <span class="skill-tag">Code</span>
+                </div>
+            </div>
+
+            <div class="skill-card" data-category="development">
+                <div class="skill-header">
+                    <div class="skill-icon">🔧</div>
+                    <div>
+                        <div class="skill-name">ClawHub</div>
+                        <div class="skill-category">Development</div>
+                    </div>
+                </div>
+                <div class="skill-desc">Search, install, update, and publish agent skills from clawhub.com.</div>
+                <div class="skill-tags">
+                    <span class="skill-tag">Skills</span>
+                    <span class="skill-tag">Marketplace</span>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>Gege AI Assistant · Powered by OpenClaw</p>
+        </footer>
+    </div>
+
+    <script>
+        // Search
+        document.getElementById('search').addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            document.querySelectorAll('.skill-card').forEach(card => {
+                card.style.display = card.textContent.toLowerCase().includes(term) ? 'block' : 'none';
+            });
+        });
+        
+        // Category filter
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const cat = btn.dataset.category;
+                document.querySelectorAll('.skill-card').forEach(card => {
+                    card.style.display = (cat === 'all' || card.dataset.category === cat) ? 'block' : 'none';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
