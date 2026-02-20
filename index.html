@@ -3,140 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agent Command Center - Aggressive Bots</title>
+    <title>Agent Command Center 2.0 - With Gege</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
         * { font-family: 'Inter', sans-serif; }
         body { background: #030712; color: white; overflow-x: hidden; }
-        
-        /* Bot Card */
-        .bot-card {
-            position: relative;
-            transition: all 0.3s ease;
-        }
-        .bot-card:hover {
-            transform: scale(1.02);
-            box-shadow: 0 0 40px rgba(239, 68, 68, 0.2), 0 20px 40px rgba(0, 0, 0, 0.5);
-        }
-        
-        /* Hover Info - Fixed Position */
-        .hover-info {
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%) scale(0.95);
-            width: 220px;
-            background: rgba(17, 24, 39, 0.98);
-            border: 2px solid;
-            border-radius: 12px;
-            padding: 12px;
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.2s ease;
-            z-index: 100;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
-        }
-        .bot-card:hover .hover-info {
-            opacity: 1;
-            pointer-events: auto;
-            transform: translateX(-50%) scale(1);
-        }
-        
-        /* Task Input Bar */
-        .task-input-bar {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease, opacity 0.3s ease;
-            opacity: 0;
-        }
-        .task-input-bar.active {
-            max-height: 100px;
-            opacity: 1;
-        }
-        
-        /* Draggable */
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 20px rgba(139, 92, 246, 0.3); } 50% { box-shadow: 0 0 40px rgba(139, 92, 246, 0.6); } }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+        .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
         .draggable { position: fixed; cursor: move; user-select: none; z-index: 50; }
         .draggable.dragging { opacity: 0.8; z-index: 100; }
-        
-        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #1f2937; }
         ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 3px; }
+        .task-card { transition: all 0.2s ease; }
+        .task-card:hover { transform: translateX(4px); }
+        .bot-card:hover { box-shadow: 0 0 30px rgba(139, 92, 246, 0.2); }
+        .gege-avatar { background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 50%, #3b82f6 100%); }
     </style>
 </head>
 <body class="min-h-screen p-6">
-    <!-- Header -->
     <header class="mb-6">
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-gradient-to-br from-red-600 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
+                <div class="w-12 h-12 bg-gradient-to-br from-violet-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg animate-pulse-glow">
                     <i data-lucide="bot" class="w-6 h-6 text-white"></i>
                 </div>
                 <div>
                     <h1 class="text-2xl font-bold text-white">Agent Command Center</h1>
-                    <p class="text-gray-400">5 Agents Online • Hover robots to see skills</p>
+                    <p class="text-gray-400">5 Agents Online • Task Approval System Active</p>
                 </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <span class="px-3 py-1.5 bg-violet-500/20 text-violet-400 rounded-full text-sm font-medium border border-violet-500/30">
+                    <i data-lucide="shield-check" class="w-4 h-4 inline mr-1"></i>
+                    Approval Mode
+                </span>
             </div>
         </div>
     </header>
 
-    <!-- Bot Grid -->
+    <!-- 5 Bot Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
         
         <!-- Gege Bot -->
-        <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 border border-violet-500/30 cursor-pointer overflow-hidden" onclick="openGegePanel()">
+        <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 border border-violet-500/30 cursor-pointer overflow-hidden group" onclick="openGegePanel()">
+            <div class="absolute inset-0 bg-gradient-to-br from-violet-500/10 via-pink-500/10 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
             <div class="absolute top-3 right-3">
-                <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-violet-500/20 text-violet-400 border border-violet-500/40">GEGE</span>
+                <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-violet-500/20 text-violet-400 border border-violet-500/40 animate-pulse">GEGE</span>
             </div>
-            
             <div class="relative z-10">
                 <h3 class="text-lg font-bold text-white mb-0.5">Gege</h3>
                 <p class="text-xs text-gray-400 mb-3">Your Personal Assistant</p>
             </div>
-            
             <div class="flex justify-center py-3">
-                <div class="relative w-24 h-24">
-                    <svg viewBox="0 0 100 100" class="w-full h-full">
-                        <defs>
-                            <linearGradient id="gegeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#8b5cf6"/>
-                                <stop offset="50%" style="stop-color:#ec4899"/>
-                                <stop offset="100%" style="stop-color:#3b82f6"/>
-                            </linearGradient>
-                        </defs>
-                        <circle cx="50" cy="50" r="35" fill="url(#gegeGrad)" opacity="0.3">
-                            <animate attributeName="r" values="35;40;35" dur="2s" repeatCount="indefinite"/>
-                        </circle>
-                        <rect x="30" y="35" width="40" height="35" rx="8" fill="url(#gegeGrad)"/>
-                        <circle cx="50" cy="28" r="15" fill="url(#gegeGrad)"/>
-                        <circle cx="45" cy="26" r="3" fill="white">
-                            <animate attributeName="opacity" values="1;0.3;1" dur="3s" repeatCount="indefinite"/>
-                        </circle>
-                        <circle cx="55" cy="26" r="3" fill="white">
-                            <animate attributeName="opacity" values="1;0.3;1" dur="3s" repeatCount="indefinite"/>
-                        </circle>
-                        
-                        <rect x="20" y="40" width="8" height="20" rx="4" fill="#8b5cf6">
-                            <animateTransform attributeName="transform" type="rotate" values="-10 24 40;10 24 40;-10 24 40" dur="2s" repeatCount="indefinite"/>
-                        </rect>
-                        
-                        <rect x="72" y="40" width="8" height="20" rx="4" fill="#8b5cf6">
-                            <animateTransform attributeName="transform" type="rotate" values="10 76 40;-10 76 40;10 76 40" dur="2s" repeatCount="indefinite"/>
-                        </rect>
-                        
-                        <circle cx="50" cy="50" r="4" fill="#ec4899">
-                            <animateMotion dur="4s" repeatCount="indefinite" path="M 0,0 m -30,0 a 30,30 0 1,0 60,0 a 30,30 0 1,0 -60,0"/>
-                        </circle>
-                        
-                        <circle cx="50" cy="50" r="3" fill="#3b82f6">
-                            <animateMotion dur="6s" repeatCount="indefinite" path="M 0,0 m 30,0 a 30,30 0 1,1 -60,0 a 30,30 0 1,1 60,0"/>
-                        </circle>
-                    </svg>
+                <div class="relative w-16 h-16 flex items-center justify-center">
+                    <div class="absolute inset-0 gege-avatar rounded-full blur-lg opacity-50 animate-pulse"></div>
+                    <div class="relative z-10 w-14 h-14 gege-avatar rounded-2xl flex items-center justify-center shadow-lg animate-float">
+                        <i data-lucide="sparkles" class="w-7 h-7 text-white"></i>
+                    </div>
+                    <div class="absolute inset-0 animate-spin" style="animation-duration: 8s;">
+                        <div class="absolute top-0 left-1/2 w-2 h-2 bg-violet-400 rounded-full -translate-x-1/2"></div>
+                    </div>
+                    <div class="absolute inset-0 animate-spin" style="animation-duration: 12s; animation-direction: reverse;">
+                        <div class="absolute bottom-0 left-1/2 w-1.5 h-1.5 bg-pink-400 rounded-full -translate-x-1/2"></div>
+                    </div>
                 </div>
             </div>
-            
+            <p class="text-xs text-center text-violet-400 mb-3">"Click to view your tasks"</p>
             <div class="flex justify-center">
                 <div class="px-3 py-1.5 bg-violet-500/20 rounded-lg border border-violet-500/30">
                     <span class="text-lg font-bold text-violet-400" id="gege-task-count">0</span>
@@ -146,446 +83,139 @@
         </div>
 
         <!-- WriteBot -->
-        <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 border-2 border-emerald-500/30 overflow-hidden">
+        <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 border border-gray-700/50 cursor-pointer overflow-hidden group">
             <div class="absolute top-3 right-3">
                 <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40" id="writebot-status">IDLE</span>
             </div>
-            
-            <!-- Hover Info -->
-            <div class="hover-info" style="border-color: #10b981;">
-                <div class="flex items-center gap-2 mb-2">
-                    <div class="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
-                        <i data-lucide="pen-tool" class="w-4 h-4 text-white"></i>
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-white text-sm">WriteBot</h4>
-                        <p class="text-xs text-emerald-400">CONTENT DESTROYER</p>
-                    </div>
-                </div>
-                
-                <p class="text-xs text-gray-300 mb-2">Crafts killer content that ranks #1</p>
-                
-                <div class="space-y-1">
-                    <div class="flex items-center gap-1 text-xs text-gray-400">
-                        <i data-lucide="zap" class="w-3 h-3 text-emerald-400"></i>
-                        SEO articles
-                    </div>
-                    
-                    <div class="flex items-center gap-1 text-xs text-gray-400">
-                        <i data-lucide="zap" class="w-3 h-3 text-emerald-400"></i>
-                        Marketing copy
-                    </div>
-                    
-                    <div class="flex items-center gap-1 text-xs text-gray-400">
-                        <i data-lucide="zap" class="w-3 h-3 text-emerald-400"></i>
-                        Product descriptions
-                    </div>
-                </div>
-            </div>
-            
             <div class="relative z-10">
                 <h3 class="text-lg font-bold text-white mb-0.5">WriteBot</h3>
                 <p class="text-xs text-gray-400 mb-3">Content Writer</p>
             </div>
-            
             <div class="flex justify-center py-3">
-                <div class="relative w-28 h-28">
-                    <svg viewBox="0 0 100 100" class="w-full h-full">
-                        <polygon points="15,45 5,35 15,55" fill="#059669"/>
-                        
-                        <polygon points="85,45 95,35 85,55" fill="#059669"/>
-                        
-                        <polygon points="25,40 75,40 80,75 20,75" fill="#10b981"/>
-                        
-                        <rect x="30" y="48" width="40" height="20" fill="#064e3b"/>
-                        
-                        <polygon points="35,52 42,54 35,56" fill="#34d399">
-                            <animate attributeName="fill" values="#34d399;#ffffff;#34d399" dur="0.5s" repeatCount="indefinite"/>
-                        </polygon>
-                        
-                        <polygon points="65,52 58,54 65,56" fill="#34d399">
-                            <animate attributeName="fill" values="#34d399;#ffffff;#34d399" dur="0.5s" repeatCount="indefinite"/>
-                        </polygon>
-                        
-                        <rect x="78" y="50" width="25" height="8" rx="2" fill="#059669">
-                            <animateTransform attributeName="transform" type="rotate" values="0 78 54;-25 78 54;0 78 54" dur="0.8s" repeatCount="indefinite"/>
-                        </rect>
-                        
-                        <polygon points="103,50 112,54 103,58" fill="#fbbf24">
-                            <animateTransform attributeName="transform" type="rotate" values="0 78 54;-25 78 54;0 78 54" dur="0.8s" repeatCount="indefinite"/>
-                        </polygon>
-                        
-                        <rect x="70" y="15" width="20" height="25" fill="white" opacity="0.9">
-                            <animateTransform attributeName="transform" type="translate" values="0,0; 20,-30" dur="1.5s" repeatCount="indefinite"/>
-                            <animate attributeName="opacity" values="1;0" dur="1.5s" repeatCount="indefinite"/>
-                        </rect>
-                        
-                        <rect x="8" y="50" width="20" height="6" rx="3" fill="#059669"/>
-                        
-                        <polygon points="5,45 5,65 15,60 15,50" fill="#047857"/>
-                        
-                        <rect x="32" y="75" width="12" height="20" fill="#059669"/>
-                        
-                        <rect x="56" y="75" width="12" height="20" fill="#059669"/>
-                        
-                        <polygon points="32,95 28,100 36,95" fill="#047857"/>
-                        
-                        <polygon points="56,95 52,100 60,95" fill="#047857"/>
-                    </svg>
+                <div class="relative w-16 h-16 flex items-center justify-center">
+                    <div class="absolute inset-0 bg-emerald-500/20 rounded-full blur-xl"></div>
+                    <div class="relative z-10 w-14 h-14 bg-emerald-500 rounded-2xl flex items-center justify-center shadow-lg animate-float">
+                        <i data-lucide="pen-tool" class="w-7 h-7 text-white"></i>
+                    </div>
                 </div>
             </div>
-            
-            <!-- Task Input Bar (Under Button) -->
-            <div id="writebot-input" class="task-input-bar">
-                <div class="flex gap-2 mt-3">
-                    <input type="text" id="writebot-text" placeholder="What should I write?" 
-                           class="flex-1 px-3 py-2 bg-gray-900 border border-emerald-500/30 rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none focus:border-emerald-500">
-                    
-                    <button onclick="submitBotTask('writebot')" class="px-3 py-2 bg-emerald-500 hover:bg-emerald-600 rounded-lg text-white text-sm font-semibold">Go</button>
+            <div class="grid grid-cols-2 gap-2 mb-3">
+                <div class="p-2 bg-gray-900/50 rounded-lg text-center">
+                    <p class="text-lg font-bold text-emerald-400">247</p>
+                    <p class="text-[10px] text-gray-500 uppercase">Articles</p>
+                </div>
+                <div class="p-2 bg-gray-900/50 rounded-lg text-center">
+                    <p class="text-lg font-bold text-emerald-400">98%</p>
+                    <p class="text-[10px] text-gray-500 uppercase">SEO</p>
                 </div>
             </div>
-            
-            <button onclick="toggleTaskInput('writebot')" class="w-full mt-3 py-2 rounded-lg font-semibold text-white text-sm bg-emerald-500 hover:bg-emerald-600 transition-colors flex items-center justify-center gap-2">
+            <button onclick="showTaskModal('writebot')" class="w-full py-2 rounded-lg font-semibold text-white text-sm bg-emerald-500 hover:bg-emerald-600 transition-colors flex items-center justify-center gap-2">
                 <i data-lucide="plus" class="w-4 h-4"></i>
-                Add Task
+                Add Writing Task
             </button>
         </div>
 
         <!-- PixelBot -->
-        <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 border-2 border-violet-500/30 overflow-hidden">
+        <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 border border-gray-700/50 cursor-pointer overflow-hidden group">
             <div class="absolute top-3 right-3">
                 <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-violet-500/20 text-violet-400 border border-violet-500/40" id="pixelbot-status">IDLE</span>
             </div>
-            
-            <div class="hover-info" style="border-color: #8b5cf6;">
-                <div class="flex items-center gap-2 mb-2">
-                    <div class="w-8 h-8 bg-violet-500 rounded-lg flex items-center justify-center">
-                        <i data-lucide="image" class="w-4 h-4 text-white"></i>
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-white text-sm">PixelBot</h4>
-                        <p class="text-xs text-violet-400">VISUAL WARRIOR</p>
-                    </div>
-                </div>
-                
-                <p class="text-xs text-gray-300 mb-2">Creates visuals that dominate</p>
-                
-                <div class="space-y-1">
-                    <div class="flex items-center gap-1 text-xs text-gray-400">
-                        <i data-lucide="zap" class="w-3 h-3 text-violet-400"></i>
-                        Hero images
-                    </div>
-                    
-                    <div class="flex items-center gap-1 text-xs text-gray-400">
-                        <i data-lucide="zap" class="w-3 h-3 text-violet-400"></i>
-                        Social graphics
-                    </div>
-                    
-                    <div class="flex items-center gap-1 text-xs text-gray-400">
-                        <i data-lucide="zap" class="w-3 h-3 text-violet-400"></i>
-                        Product shots
-                    </div>
-                </div>
-            </div>
-            
             <div class="relative z-10">
                 <h3 class="text-lg font-bold text-white mb-0.5">PixelBot</h3>
                 <p class="text-xs text-gray-400 mb-3">Image Generation</p>
             </div>
-            
             <div class="flex justify-center py-3">
-                <div class="relative w-28 h-28">
-                    <svg viewBox="0 0 100 100" class="w-full h-full">
-                        <polygon points="12,42 2,30 15,50" fill="#7c3aed"/>
-                        
-                        <polygon points="88,42 98,30 85,50" fill="#7c3aed"/>
-                        
-                        <polygon points="22,38 78,38 85,78 15,78" fill="#8b5cf6"/>
-                        
-                        <rect x="28" y="48" width="44" height="16" rx="2" fill="#1e1b4b"/>
-                        
-                        <rect x="32" y="52" width="16" height="8" fill="#a78bfa">
-                            <animate attributeName="fill" values="#a78bfa;#ffffff;#ec4899;#a78bfa" dur="0.7s" repeatCount="indefinite"/>
-                        </rect>
-                        
-                        <rect x="52" y="52" width="16" height="8" fill="#a78bfa">
-                            <animate attributeName="fill" values="#a78bfa;#ffffff;#3b82f6;#a78bfa" dur="0.7s" repeatCount="indefinite"/>
-                        </rect>
-                        
-                        <rect x="80" y="48" width="28" height="10" rx="2" fill="#7c3aed">
-                            <animateTransform attributeName="transform" type="rotate" values="0 80 53;-30 80 53;0 80 53" dur="0.6s" repeatCount="indefinite"/>
-                        </rect>
-                        
-                        <rect x="106" y="45" width="8" height="16" fill="#1f2937"/>
-                        
-                        <ellipse cx="110" cy="53" rx="4" ry="8" fill="#ec4899">
-                            <animateTransform attributeName="transform" type="rotate" values="0 80 53;-30 80 53;0 80 53" dur="0.6s" repeatCount="indefinite"/>
-                        </ellipse>
-                        
-                        <circle cx="115" cy="70" r="5" fill="#ec4899" opacity="0">
-                            <animate attributeName="opacity" values="0;1;0" dur="0.6s" repeatCount="indefinite"/>
-                            <animate attributeName="cy" values="60;85" dur="0.6s" repeatCount="indefinite"/>
-                        </circle>
-                        
-                        <rect x="5" y="50" width="20" height="6" rx="3" fill="#7c3aed"/>
-                        
-                        <polygon points="0,40 0,70 15,65 15,45" fill="#1f2937" stroke="#fbbf24" stroke-width="2"/>
-                        
-                        <circle cx="5" cy="50" r="3" fill="#ec4899"/>
-                        
-                        <circle cx="8" cy="58" r="3" fill="#3b82f6"/>
-                        
-                        <circle cx="10" cy="48" r="3" fill="#10b981"/>
-                        
-                        <rect x="30" y="78" width="14" height="18" fill="#7c3aed"/>
-                        
-                        <rect x="56" y="78" width="14" height="18" fill="#7c3aed"/>
-                        
-                        <polygon points="30,96 25,100 35,96" fill="#5b21b6"/>
-                        
-                        <polygon points="56,96 51,100 61,96" fill="#5b21b6"/>
-                    </svg>
+                <div class="relative w-16 h-16 flex items-center justify-center">
+                    <div class="absolute inset-0 bg-violet-500/20 rounded-full blur-xl"></div>
+                    <div class="relative z-10 w-14 h-14 bg-violet-500 rounded-2xl flex items-center justify-center shadow-lg animate-float" style="animation-delay: 0.5s;">
+                        <i data-lucide="image" class="w-7 h-7 text-white"></i>
+                    </div>
                 </div>
             </div>
-            
-            <div id="pixelbot-input" class="task-input-bar">
-                <div class="flex gap-2 mt-3">
-                    <input type="text" id="pixelbot-text" placeholder="What image should I create?" 
-                           class="flex-1 px-3 py-2 bg-gray-900 border border-violet-500/30 rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none focus:border-violet-500">
-                    
-                    <button onclick="submitBotTask('pixelbot')" class="px-3 py-2 bg-violet-500 hover:bg-violet-600 rounded-lg text-white text-sm font-semibold">Go</button>
+            <div class="grid grid-cols-2 gap-2 mb-3">
+                <div class="p-2 bg-gray-900/50 rounded-lg text-center">
+                    <p class="text-lg font-bold text-violet-400">1.2k</p>
+                    <p class="text-[10px] text-gray-500 uppercase">Images</p>
+                </div>
+                <div class="p-2 bg-gray-900/50 rounded-lg text-center">
+                    <p class="text-lg font-bold text-violet-400">4s</p>
+                    <p class="text-[10px] text-gray-500 uppercase">Avg</p>
                 </div>
             </div>
-            
-            <button onclick="toggleTaskInput('pixelbot')" class="w-full mt-3 py-2 rounded-lg font-semibold text-white text-sm bg-violet-500 hover:bg-violet-600 transition-colors flex items-center justify-center gap-2">
+            <button onclick="showTaskModal('pixelbot')" class="w-full py-2 rounded-lg font-semibold text-white text-sm bg-violet-500 hover:bg-violet-600 transition-colors flex items-center justify-center gap-2">
                 <i data-lucide="plus" class="w-4 h-4"></i>
-                Add Task
+                Add Image Task
             </button>
         </div>
 
         <!-- KeyBot -->
-        <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 border-2 border-amber-500/30 overflow-hidden">
+        <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 border border-gray-700/50 cursor-pointer overflow-hidden group">
             <div class="absolute top-3 right-3">
                 <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-amber-500/20 text-amber-400 border border-amber-500/40" id="keybot-status">IDLE</span>
             </div>
-            
-            <div class="hover-info" style="border-color: #f59e0b;">
-                <div class="flex items-center gap-2 mb-2">
-                    <div class="w-8 h-8 bg-amber-500 rounded-lg flex items-center justify-center">
-                        <i data-lucide="search" class="w-4 h-4 text-white"></i>
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-white text-sm">KeyBot</h4>
-                        <p class="text-xs text-amber-400">DATA HUNTER</p>
-                    </div>
-                </div>
-                
-                <p class="text-xs text-gray-300 mb-2">Hunts keywords that crush competition</p>
-                
-                <div class="space-y-1">
-                    <div class="flex items-center gap-1 text-xs text-gray-400">
-                        <i data-lucide="zap" class="w-3 h-3 text-amber-400"></i>
-                        Keyword research
-                    </div>
-                    
-                    <div class="flex items-center gap-1 text-xs text-gray-400">
-                        <i data-lucide="zap" class="w-3 h-3 text-amber-400"></i>
-                        Competitor intel
-                    </div>
-                    
-                    <div class="flex items-center gap-1 text-xs text-gray-400">
-                        <i data-lucide="zap" class="w-3 h-3 text-amber-400"></i>
-                        Trend prediction
-                    </div>
-                </div>
-            </div>
-            
             <div class="relative z-10">
                 <h3 class="text-lg font-bold text-white mb-0.5">KeyBot</h3>
                 <p class="text-xs text-gray-400 mb-3">Keyword Mapper</p>
             </div>
-            
             <div class="flex justify-center py-3">
-                <div class="relative w-28 h-28">
-                    <svg viewBox="0 0 100 100" class="w-full h-full">
-                        <polygon points="10,42 0,28 18,50" fill="#d97706"/>
-                        
-                        <polygon points="90,42 100,28 82,50" fill="#d97706"/>
-                        
-                        <polygon points="20,38 80,38 88,82 12,82" fill="#f59e0b"/>
-                        
-                        <rect x="25" y="48" width="50" height="20" fill="#78350f"/>
-                        
-                        <rect x="25" y="48" width="50" height="3" fill="#fbbf24" opacity="0.9">
-                            <animate attributeName="y" values="48;65;48" dur="1.5s" repeatCount="indefinite"/>
-                        </rect>
-                        
-                        <polygon points="35,55 45,58 35,61" fill="#fcd34d">
-                            <animate attributeName="fill" values="#fcd34d;#ffffff;#fcd34d" dur="0.4s" repeatCount="indefinite"/>
-                        </polygon>
-                        
-                        <polygon points="65,55 55,58 65,61" fill="#fcd34d">
-                            <animate attributeName="fill" values="#fcd34d;#ffffff;#fcd34d" dur="0.4s" repeatCount="indefinite"/>
-                        </polygon>
-                        
-                        <rect x="82" y="52" width="25" height="8" rx="2" fill="#d97706"/>
-                        
-                        <circle cx="110" cy="56" r="10" fill="none" stroke="#fcd34d" stroke-width="3"/>
-                        
-                        <line x1="118" y1="63" x2="125" y2="70" stroke="#fcd34d" stroke-width="3" stroke-linecap="round"/>
-                        
-                        <rect x="3" y="52" width="22" height="6" rx="3" fill="#d97706"/>
-                        
-                        <polygon points="-2,42 -2,68 12,62 12,48" fill="#1f2937" stroke="#fbbf24" stroke-width="2"/>
-                        
-                        <rect x="2" y="50" width="8" height="3" fill="#34d399">
-                            <animate attributeName="width" values="8;3;8" dur="0.8s" repeatCount="indefinite"/>
-                        </rect>
-                        
-                        <rect x="2" y="55" width="6" height="3" fill="#60a5fa">
-                            <animate attributeName="width" values="6;10;6" dur="1s" repeatCount="indefinite"/>
-                        </rect>
-                        
-                        <rect x="28" y="82" width="16" height="16" fill="#d97706"/>
-                        
-                        <rect x="56" y="82" width="16" height="16" fill="#d97706"/>
-                        
-                        <polygon points="28,98 22,100 32,98" fill="#92400e"/>
-                        
-                        <polygon points="56,98 50,100 60,98" fill="#92400e"/>
-                    </svg>
+                <div class="relative w-16 h-16 flex items-center justify-center">
+                    <div class="absolute inset-0 bg-amber-500/20 rounded-full blur-xl"></div>
+                    <div class="relative z-10 w-14 h-14 bg-amber-500 rounded-2xl flex items-center justify-center shadow-lg animate-float" style="animation-delay: 1s;">
+                        <i data-lucide="search" class="w-7 h-7 text-white"></i>
+                    </div>
                 </div>
             </div>
-            
-            <div id="keybot-input" class="task-input-bar">
-                <div class="flex gap-2 mt-3">
-                    <input type="text" id="keybot-text" placeholder="What keywords to research?" 
-                           class="flex-1 px-3 py-2 bg-gray-900 border border-amber-500/30 rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none focus:border-amber-500">
-                    
-                    <button onclick="submitBotTask('keybot')" class="px-3 py-2 bg-amber-500 hover:bg-amber-600 rounded-lg text-white text-sm font-semibold">Go</button>
+            <div class="grid grid-cols-2 gap-2 mb-3">
+                <div class="p-2 bg-gray-900/50 rounded-lg text-center">
+                    <p class="text-lg font-bold text-amber-400">8.5k</p>
+                    <p class="text-[10px] text-gray-500 uppercase">Keywords</p>
+                </div>
+                <div class="p-2 bg-gray-900/50 rounded-lg text-center">
+                    <p class="text-lg font-bold text-amber-400">92%</p>
+                    <p class="text-[10px] text-gray-500 uppercase">Accuracy</p>
                 </div>
             </div>
-            
-            <button onclick="toggleTaskInput('keybot')" class="w-full mt-3 py-2 rounded-lg font-semibold text-white text-sm bg-amber-500 hover:bg-amber-600 transition-colors flex items-center justify-center gap-2">
+            <button onclick="showTaskModal('keybot')" class="w-full py-2 rounded-lg font-semibold text-white text-sm bg-amber-500 hover:bg-amber-600 transition-colors flex items-center justify-center gap-2">
                 <i data-lucide="plus" class="w-4 h-4"></i>
-                Add Task
+                Add SEO Task
             </button>
         </div>
 
         <!-- PressBot -->
-        <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 border-2 border-blue-500/30 overflow-hidden">
+        <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 border border-gray-700/50 cursor-pointer overflow-hidden group">
             <div class="absolute top-3 right-3">
                 <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-blue-500/20 text-blue-400 border border-blue-500/40" id="pressbot-status">IDLE</span>
             </div>
-            
-            <div class="hover-info" style="border-color: #3b82f6;">
-                <div class="flex items-center gap-2 mb-2">
-                    <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-                        <i data-lucide="rocket" class="w-4 h-4 text-white"></i>
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-white text-sm">PressBot</h4>
-                        <p class="text-xs text-blue-400">CONTENT LAUNCHER</p>
-                    </div>
-                </div>
-                
-                <p class="text-xs text-gray-300 mb-2">Launches content at rocket speed</p>
-                
-                <div class="space-y-1">
-                    <div class="flex items-center gap-1 text-xs text-gray-400">
-                        <i data-lucide="zap" class="w-3 h-3 text-blue-400"></i>
-                        Instant WP publish
-                    </div>
-                    
-                    <div class="flex items-center gap-1 text-xs text-gray-400">
-                        <i data-lucide="zap" class="w-3 h-3 text-blue-400"></i>
-                        Scheduled posts
-                    </div>
-                    
-                    <div class="flex items-center gap-1 text-xs text-gray-400">
-                        <i data-lucide="zap" class="w-3 h-3 text-blue-400"></i>
-                        Multi-site control
-                    </div>
-                </div>
-            </div>
-            
             <div class="relative z-10">
                 <h3 class="text-lg font-bold text-white mb-0.5">PressBot</h3>
                 <p class="text-xs text-gray-400 mb-3">WordPress Publisher</p>
             </div>
-            
             <div class="flex justify-center py-3">
-                <div class="relative w-28 h-28">
-                    <svg viewBox="0 0 100 100" class="w-full h-full">
-                        <polygon points="18,32 8,20 22,42" fill="#1d4ed8"/>
-                        
-                        <polygon points="82,32 92,20 78,42" fill="#1d4ed8"/>
-                        
-                        <rect x="22" y="32" width="10" height="25" rx="5" fill="#1e40af"/>
-                        
-                        <rect x="68" y="32" width="10" height="25" rx="5" fill="#1e40af"/>
-                        
-                        <polygon points="25,57 28,75 32,57" fill="#f97316">
-                            <animate attributeName="opacity" values="0.6;1;0.6" dur="0.2s" repeatCount="indefinite"/>
-                        </polygon>
-                        
-                        <polygon points="68,57 72,75 75,57" fill="#f97316">
-                            <animate attributeName="opacity" values="0.6;1;0.6" dur="0.2s" repeatCount="indefinite" begin="0.1s"/>
-                        </polygon>
-                        
-                        <polygon points="30,40 70,40 75,85 25,85" fill="#3b82f6"/>
-                        
-                        <rect x="35" y="48" width="30" height="20" fill="#1e3a8a"/>
-                        
-                        <polygon points="40,55 50,58 40,61" fill="#60a5fa">
-                            <animate attributeName="fill" values="#60a5fa;#ffffff;#60a5fa" dur="0.5s" repeatCount="indefinite"/>
-                        </polygon>
-                        
-                        <polygon points="60,55 50,58 60,61" fill="#60a5fa">
-                            <animate attributeName="fill" values="#60a5fa;#ffffff;#60a5fa" dur="0.5s" repeatCount="indefinite"/>
-                        </polygon>
-                        
-                        <rect x="78" y="52" width="20" height="8" rx="2" fill="#2563eb"/>
-                        
-                        <rect x="2" y="52" width="20" height="8" rx="2" fill="#2563eb"/>
-                        
-                        <rect x="75" y="12" width="20" height="28" rx="2" fill="white" stroke="#e5e7eb" stroke-width="1">
-                            <animateTransform attributeName="transform" type="translate" values="0,0; 25,-35" dur="1.2s" repeatCount="indefinite"/>
-                            <animate attributeName="opacity" values="1;0" dur="1.2s" repeatCount="indefinite"/>
-                        </rect>
-                        
-                        <circle cx="50" cy="78" r="7" fill="white"/>
-                        
-                        <text x="50" y="82" text-anchor="middle" font-size="10" font-weight="bold" fill="#3b82f6">W</text>
-                        
-                        <rect x="32" y="85" width="14" height="14" fill="#2563eb"/>
-                        
-                        <rect x="54" y="85" width="14" height="14" fill="#2563eb"/>
-                        
-                        <polygon points="32,99 26,100 36,99" fill="#1e40af"/>
-                        
-                        <polygon points="54,99 48,100 58,99" fill="#1e40af"/>
-                    </svg>
+                <div class="relative w-16 h-16 flex items-center justify-center">
+                    <div class="absolute inset-0 bg-blue-500/20 rounded-full blur-xl"></div>
+                    <div class="relative z-10 w-14 h-14 bg-blue-500 rounded-2xl flex items-center justify-center shadow-lg animate-float" style="animation-delay: 1.5s;">
+                        <i data-lucide="rocket" class="w-7 h-7 text-white"></i>
+                    </div>
                 </div>
             </div>
-            
-            <div id="pressbot-input" class="task-input-bar">
-                <div class="flex gap-2 mt-3">
-                    <input type="text" id="pressbot-text" placeholder="What to publish?" 
-                           class="flex-1 px-3 py-2 bg-gray-900 border border-blue-500/30 rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none focus:border-blue-500">
-                    
-                    <button onclick="submitBotTask('pressbot')" class="px-3 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg text-white text-sm font-semibold">Go</button>
+            <div class="grid grid-cols-2 gap-2 mb-3">
+                <div class="p-2 bg-gray-900/50 rounded-lg text-center">
+                    <p class="text-lg font-bold text-blue-400">432</p>
+                    <p class="text-[10px] text-gray-500 uppercase">Posts</p>
+                </div>
+                <div class="p-2 bg-gray-900/50 rounded-lg text-center">
+                    <p class="text-lg font-bold text-blue-400">12</p>
+                    <p class="text-[10px] text-gray-500 uppercase">Sites</p>
                 </div>
             </div>
-            
-            <button onclick="toggleTaskInput('pressbot')" class="w-full mt-3 py-2 rounded-lg font-semibold text-white text-sm bg-blue-500 hover:bg-blue-600 transition-colors flex items-center justify-center gap-2">
+            <button onclick="showTaskModal('pressbot')" class="w-full py-2 rounded-lg font-semibold text-white text-sm bg-blue-500 hover:bg-blue-600 transition-colors flex items-center justify-center gap-2">
                 <i data-lucide="plus" class="w-4 h-4"></i>
-                Add Task
+                Add Publish Task
             </button>
         </div>
     </div>
 
-    <!-- Activity Log -->
+    <!-- Draggable Activity Log -->
     <div id="activity-log" class="draggable bg-gray-800/90 backdrop-blur-md rounded-xl border border-gray-700/50 shadow-2xl" style="bottom: 20px; right: 20px; width: 380px; max-height: 400px;">
         <div class="drag-handle flex items-center justify-between p-3 border-b border-gray-700/50 cursor-move bg-gray-700/30 rounded-t-xl">
             <div class="flex items-center gap-2">
@@ -594,8 +224,12 @@
                 <span class="px-2 py-0.5 bg-violet-500/20 text-violet-400 rounded text-xs" id="activity-count">0</span>
             </div>
             <div class="flex items-center gap-1">
-                <button onclick="minimizeLog()" class="p-1 hover:bg-gray-600 rounded"><i data-lucide="minus" class="w-4 h-4 text-gray-400"></i></button>
-                <button onclick="toggleLog()" class="p-1 hover:bg-gray-600 rounded"><i data-lucide="x" class="w-4 h-4 text-gray-400"></i></button>
+                <button onclick="minimizeLog()" class="p-1 hover:bg-gray-600 rounded">
+                    <i data-lucide="minus" class="w-4 h-4 text-gray-400"></i>
+                </button>
+                <button onclick="toggleLog()" class="p-1 hover:bg-gray-600 rounded">
+                    <i data-lucide="x" class="w-4 h-4 text-gray-400"></i>
+                </button>
             </div>
         </div>
         <div id="log-content" class="p-3 overflow-y-auto" style="max-height: 320px;">
@@ -608,55 +242,85 @@
         </div>
     </div>
 
-    <!-- Gege Panel -->
+    <!-- Gege Task Panel -->
     <div id="gege-panel" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center">
         <div class="bg-gray-800 rounded-2xl border border-violet-500/30 w-full max-w-4xl max-h-[80vh] overflow-hidden shadow-2xl m-4">
             <div class="p-4 border-b border-gray-700/50 flex items-center justify-between bg-gradient-to-r from-violet-500/10 to-pink-500/10">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #8b5cf6, #ec4899)">
+                    <div class="w-10 h-10 gege-avatar rounded-xl flex items-center justify-center">
                         <i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
                     </div>
                     <div>
                         <h2 class="text-xl font-bold text-white">Gege's Task Board</h2>
-                        <p class="text-sm text-gray-400">Manage and approve tasks</p>
+                        <p class="text-sm text-gray-400">Manage and approve tasks for your agents</p>
                     </div>
                 </div>
-                <button onclick="closeGegePanel()" class="p-2 hover:bg-gray-700 rounded-lg"><i data-lucide="x" class="w-5 h-5 text-gray-400"></i></button>
+                <button onclick="closeGegePanel()" class="p-2 hover:bg-gray-700 rounded-lg">
+                    <i data-lucide="x" class="w-5 h-5 text-gray-400"></i>
+                </button>
             </div>
             
             <div class="p-4 border-b border-gray-700/50">
                 <div class="flex gap-2">
-                    <input type="text" id="new-task-input" placeholder="Describe what you need..." 
+                    <input type="text" id="new-task-input" placeholder="Describe what you need... (e.g., 'Write a blog post about AI')" 
                            class="flex-1 px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-violet-500">
-                    
                     <button onclick="addTask()" class="px-4 py-2 bg-violet-500 hover:bg-violet-600 rounded-lg font-semibold text-white flex items-center gap-2">
                         <i data-lucide="plus" class="w-4 h-4"></i>
-                        Add
+                        Add Task
                     </button>
                 </div>
+                <p class="text-xs text-gray-500 mt-2">
+                    <i data-lucide="info" class="w-3 h-3 inline mr-1"></i>
+                    Gege will automatically categorize tasks. You approve before agents start working.
+                </p>
             </div>
             
             <div class="p-4 overflow-y-auto" style="max-height: 50vh;">
                 <div class="mb-6">
-                    <h3 class="text-sm font-semibold text-amber-400 mb-3">
-                        Pending <span class="px-2 py-0.5 bg-amber-500/20 rounded text-xs" id="pending-count">0</span>
+                    <h3 class="text-sm font-semibold text-amber-400 mb-3 flex items-center gap-2">
+                        <i data-lucide="clock" class="w-4 h-4"></i>
+                        Pending Approval
+                        <span class="px-2 py-0.5 bg-amber-500/20 rounded text-xs" id="pending-count">0</span>
                     </h3>
-                    <div id="pending-tasks" class="space-y-2"><p class="text-sm text-gray-500 italic">No pending tasks</p></div>
+                    <div id="pending-tasks" class="space-y-2">
+                        <p class="text-sm text-gray-500 italic">No pending tasks</p>
+                    </div>
                 </div>
                 
                 <div class="mb-6">
-                    <h3 class="text-sm font-semibold text-blue-400 mb-3">
-                        In Progress <span class="px-2 py-0.5 bg-blue-500/20 rounded text-xs" id="progress-count">0</span>
+                    <h3 class="text-sm font-semibold text-blue-400 mb-3 flex items-center gap-2">
+                        <i data-lucide="loader" class="w-4 h-4"></i>
+                        In Progress
+                        <span class="px-2 py-0.5 bg-blue-500/20 rounded text-xs" id="progress-count">0</span>
                     </h3>
-                    <div id="progress-tasks" class="space-y-2"><p class="text-sm text-gray-500 italic">No tasks in progress</p></div>
+                    <div id="progress-tasks" class="space-y-2">
+                        <p class="text-sm text-gray-500 italic">No tasks in progress</p>
+                    </div>
                 </div>
                 
                 <div>
-                    <h3 class="text-sm font-semibold text-emerald-400 mb-3">
-                        Completed <span class="px-2 py-0.5 bg-emerald-500/20 rounded text-xs" id="completed-count">0</span>
+                    <h3 class="text-sm font-semibold text-emerald-400 mb-3 flex items-center gap-2">
+                        <i data-lucide="check-circle" class="w-4 h-4"></i>
+                        Completed
+                        <span class="px-2 py-0.5 bg-emerald-500/20 rounded text-xs" id="completed-count">0</span>
                     </h3>
-                    <div id="completed-tasks" class="space-y-2"><p class="text-sm text-gray-500 italic">No completed tasks</p></div>
+                    <div id="completed-tasks" class="space-y-2">
+                        <p class="text-sm text-gray-500 italic">No completed tasks</p>
+                    </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Task Modal -->
+    <div id="task-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center">
+        <div class="bg-gray-800 rounded-2xl border border-gray-700 w-full max-w-md m-4 p-6">
+            <h3 class="text-xl font-bold text-white mb-4" id="modal-title">Add Task</h3>
+            <textarea id="task-description" rows="3" placeholder="Describe the task..." 
+                      class="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 resize-none focus:outline-none focus:border-violet-500 mb-4"></textarea>
+            <div class="flex gap-2">
+                <button onclick="closeTaskModal()" class="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-white">Cancel</button>
+                <button onclick="submitTask()" class="flex-1 px-4 py-2 bg-violet-500 hover:bg-violet-600 rounded-lg text-white font-semibold">Add to Gege</button>
             </div>
         </div>
     </div>
@@ -665,13 +329,15 @@
         lucide.createIcons();
         
         let tasks = [];
+        let currentBot = null;
         let taskIdCounter = 1;
         
         // Draggable
         const draggable = document.getElementById('activity-log');
         const dragHandle = draggable.querySelector('.drag-handle');
         let isDragging = false;
-        let currentX, currentY, initialX, initialY, xOffset = 0, yOffset = 0;
+        let currentX, currentY, initialX, initialY;
+        let xOffset = 0, yOffset = 0;
         
         dragHandle.addEventListener('mousedown', dragStart);
         document.addEventListener('mousemove', drag);
@@ -729,32 +395,29 @@
             document.getElementById('gege-panel').classList.add('hidden');
         }
         
-        // Toggle task input bar
-        function toggleTaskInput(bot) {
-            const inputBar = document.getElementById(bot + '-input');
-            const isActive = inputBar.classList.contains('active');
-            
-            // Close all other inputs
-            document.querySelectorAll('.task-input-bar').forEach(bar => {
-                bar.classList.remove('active');
-            });
-            
-            // Toggle current
-            if (!isActive) {
-                inputBar.classList.add('active');
-                document.getElementById(bot + '-text').focus();
-            }
+        function showTaskModal(bot) {
+            currentBot = bot;
+            const botNames = {
+                'writebot': 'WriteBot - Content Writing',
+                'pixelbot': 'PixelBot - Image Generation',
+                'keybot': 'KeyBot - Keyword Research',
+                'pressbot': 'PressBot - WordPress Publishing'
+            };
+            document.getElementById('modal-title').textContent = 'Add Task for ' + botNames[bot];
+            document.getElementById('task-modal').classList.remove('hidden');
         }
         
-        // Submit task from bot input
-        function submitBotTask(bot) {
-            const input = document.getElementById(bot + '-text');
-            const description = input.value;
-            
+        function closeTaskModal() {
+            document.getElementById('task-modal').classList.add('hidden');
+            document.getElementById('task-description').value = '';
+            currentBot = null;
+        }
+        
+        function submitTask() {
+            const description = document.getElementById('task-description').value;
             if (description.trim()) {
-                addTaskToGege(description, bot);
-                input.value = '';
-                document.getElementById(bot + '-input').classList.remove('active');
+                addTaskToGege(description, currentBot);
+                closeTaskModal();
             }
         }
         
@@ -769,19 +432,25 @@
         
         function addTaskToGege(description, suggestedBot = null) {
             let assignedBot = suggestedBot;
+            let category = 'general';
             const lowerDesc = description.toLowerCase();
             
             if (!assignedBot) {
-                if (lowerDesc.includes('write') || lowerDesc.includes('blog') || lowerDesc.includes('article')) {
+                if (lowerDesc.includes('write') || lowerDesc.includes('blog') || lowerDesc.includes('article') || lowerDesc.includes('content') || lowerDesc.includes('copy')) {
                     assignedBot = 'writebot';
-                } else if (lowerDesc.includes('image') || lowerDesc.includes('picture') || lowerDesc.includes('photo')) {
+                    category = 'writing';
+                } else if (lowerDesc.includes('image') || lowerDesc.includes('picture') || lowerDesc.includes('photo') || lowerDesc.includes('generate') || lowerDesc.includes('draw')) {
                     assignedBot = 'pixelbot';
-                } else if (lowerDesc.includes('keyword') || lowerDesc.includes('seo') || lowerDesc.includes('search')) {
+                    category = 'image';
+                } else if (lowerDesc.includes('keyword') || lowerDesc.includes('seo') || lowerDesc.includes('search') || lowerDesc.includes('rank')) {
                     assignedBot = 'keybot';
-                } else if (lowerDesc.includes('publish') || lowerDesc.includes('post') || lowerDesc.includes('wordpress')) {
+                    category = 'seo';
+                } else if (lowerDesc.includes('publish') || lowerDesc.includes('post') || lowerDesc.includes('wordpress') || lowerDesc.includes('wp')) {
                     assignedBot = 'pressbot';
+                    category = 'publishing';
                 } else {
                     assignedBot = 'writebot';
+                    category = 'writing';
                 }
             }
             
@@ -797,17 +466,24 @@
                 description: description,
                 bot: assignedBot,
                 botName: botNames[assignedBot],
+                category: category,
                 status: 'pending',
                 createdAt: new Date()
             };
             
             tasks.push(task);
             renderTasks();
-            addActivity(`New task: "${description.substring(0, 30)}..."`);
-            document.getElementById('gege-task-count').textContent = tasks.filter(t => t.status === 'pending').length;
+            addActivity(`New task added to Gege: "${description.substring(0, 30)}..."`);
+            
+            const pendingCount = tasks.filter(t => t.status === 'pending').length;
+            document.getElementById('gege-task-count').textContent = pendingCount;
         }
         
         function renderTasks() {
+            const pendingContainer = document.getElementById('pending-tasks');
+            const progressContainer = document.getElementById('progress-tasks');
+            const completedContainer = document.getElementById('completed-tasks');
+            
             const pending = tasks.filter(t => t.status === 'pending');
             const inProgress = tasks.filter(t => t.status === 'approved');
             const completed = tasks.filter(t => t.status === 'completed');
@@ -815,47 +491,65 @@
             document.getElementById('pending-count').textContent = pending.length;
             document.getElementById('progress-count').textContent = inProgress.length;
             document.getElementById('completed-count').textContent = completed.length;
+            document.getElementById('gege-task-count').textContent = pending.length;
             
-            const pendingContainer = document.getElementById('pending-tasks');
             if (pending.length === 0) {
                 pendingContainer.innerHTML = '<p class="text-sm text-gray-500 italic">No pending tasks</p>';
             } else {
                 pendingContainer.innerHTML = pending.map(task => `
-                    <div class="bg-gray-900/50 border border-amber-500/30 rounded-lg p-3">
+                    <div class="task-card bg-gray-900/50 border border-amber-500/30 rounded-lg p-3">
                         <div class="flex items-start justify-between">
                             <div class="flex-1">
                                 <p class="text-sm text-white mb-1">${task.description}</p>
-                                <span class="px-2 py-0.5 bg-gray-700 rounded text-xs text-gray-300">${task.botName}</span>
+                                <div class="flex items-center gap-2">
+                                    <span class="px-2 py-0.5 bg-gray-700 rounded text-xs text-gray-300">${task.botName}</span>
+                                    <span class="px-2 py-0.5 bg-amber-500/20 text-amber-400 rounded text-xs">Pending</span>
+                                </div>
                             </div>
-                            <button onclick="approveTask(${task.id})" class="ml-2 px-3 py-1 bg-emerald-500 hover:bg-emerald-600 rounded text-xs font-semibold text-white">Approve</button>
+                            <button onclick="approveTask(${task.id})" class="ml-2 px-3 py-1 bg-emerald-500 hover:bg-emerald-600 rounded text-xs font-semibold text-white flex items-center gap-1">
+                                <i data-lucide="check" class="w-3 h-3"></i>
+                                Approve
+                            </button>
                         </div>
                     </div>
                 `).join('');
             }
             
-            const progressContainer = document.getElementById('progress-tasks');
             if (inProgress.length === 0) {
                 progressContainer.innerHTML = '<p class="text-sm text-gray-500 italic">No tasks in progress</p>';
             } else {
                 progressContainer.innerHTML = inProgress.map(task => `
-                    <div class="bg-gray-900/50 border border-blue-500/30 rounded-lg p-3">
-                        <p class="text-sm text-white">${task.description}</p>
-                        <span class="px-2 py-0.5 bg-blue-500/20 text-blue-400 rounded text-xs">${task.botName} working...</span>
+                    <div class="task-card bg-gray-900/50 border border-blue-500/30 rounded-lg p-3">
+                        <div class="flex items-center gap-2">
+                            <div class="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+                            <p class="text-sm text-white">${task.description}</p>
+                        </div>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="px-2 py-0.5 bg-gray-700 rounded text-xs text-gray-300">${task.botName}</span>
+                            <span class="px-2 py-0.5 bg-blue-500/20 text-blue-400 rounded text-xs">Working...</span>
+                        </div>
                     </div>
                 `).join('');
             }
             
-            const completedContainer = document.getElementById('completed-tasks');
             if (completed.length === 0) {
                 completedContainer.innerHTML = '<p class="text-sm text-gray-500 italic">No completed tasks</p>';
             } else {
                 completedContainer.innerHTML = completed.map(task => `
-                    <div class="bg-gray-900/50 border border-emerald-500/30 rounded-lg p-3 opacity-60">
-                        <p class="text-sm text-white line-through">${task.description}</p>
-                        <span class="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 rounded text-xs">Done</span>
+                    <div class="task-card bg-gray-900/50 border border-emerald-500/30 rounded-lg p-3 opacity-60">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+                            <p class="text-sm text-white line-through">${task.description}</p>
+                        </div>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="px-2 py-0.5 bg-gray-700 rounded text-xs text-gray-300">${task.botName}</span>
+                            <span class="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 rounded text-xs">Done</span>
+                        </div>
                     </div>
                 `).join('');
             }
+            
+            lucide.createIcons();
         }
         
         function approveTask(taskId) {
@@ -863,14 +557,15 @@
             if (task) {
                 task.status = 'approved';
                 renderTasks();
-                addActivity(`${task.botName} started working`);
+                addActivity(`Task approved! ${task.botName} is now working on: "${task.description.substring(0, 25)}..."`);
+                
                 document.getElementById(task.bot + '-status').textContent = 'WORKING';
                 document.getElementById(task.bot + '-status').className = 'px-2 py-0.5 rounded-full text-xs font-bold bg-blue-500/20 text-blue-400 border border-blue-500/40';
                 
                 setTimeout(() => {
                     task.status = 'completed';
                     renderTasks();
-                    addActivity(`${task.botName} completed task`);
+                    addActivity(`${task.botName} completed: "${task.description.substring(0, 25)}..."`);
                     document.getElementById(task.bot + '-status').textContent = 'IDLE';
                     document.getElementById(task.bot + '-status').className = 'px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40';
                 }, 5000);
@@ -880,32 +575,31 @@
         function addActivity(message) {
             const list = document.getElementById('activity-list');
             const emptyState = list.querySelector('.text-center');
-            if (emptyState) emptyState.remove();
+            if (emptyState) {
+                emptyState.remove();
+            }
             
             const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             const item = document.createElement('div');
             item.className = 'flex items-center gap-3 p-2 bg-gray-900/50 rounded-lg text-sm';
-            item.innerHTML = `<span class="text-gray-500 text-xs">${time}</span><span class="text-gray-300">${message}</span>`;
+            item.innerHTML = `
+                <span class="text-gray-500 text-xs">${time}</span>
+                <span class="text-gray-300">${message}</span>
+            `;
             list.insertBefore(item, list.firstChild);
-            document.getElementById('activity-count').textContent = list.children.length;
+            
+            const count = list.children.length;
+            document.getElementById('activity-count').textContent = count;
         }
-        
-        // Enter key on inputs
-        document.querySelectorAll('input[id$="-text"]').forEach(input => {
-            input.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    const bot = input.id.replace('-text', '');
-                    submitBotTask(bot);
-                }
-            });
-        });
-        
-        document.getElementById('new-task-input').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') addTask();
-        });
         
         document.getElementById('gege-panel').addEventListener('click', (e) => {
             if (e.target === e.currentTarget) closeGegePanel();
+        });
+        document.getElementById('task-modal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closeTaskModal();
+        });
+        document.getElementById('new-task-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addTask();
         });
     </script>
 </body>
