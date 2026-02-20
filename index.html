@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agent Command Center 2.0 - Animated Bots</title>
+    <title>Agent Command Center - Mini Robots</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -11,72 +11,131 @@
         * { font-family: 'Inter', sans-serif; }
         body { background: #030712; color: white; overflow-x: hidden; }
         
-        /* WriteBot Animations */
-        @keyframes writebot-float { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-8px) rotate(2deg); } }
-        @keyframes paper-float-1 { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-15px) rotate(10deg); } }
-        @keyframes paper-float-2 { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-12px) rotate(-15deg); } }
-        @keyframes steam { 0% { opacity: 0; transform: translateY(0); } 50% { opacity: 0.6; } 100% { opacity: 0; transform: translateY(-15px); } }
-        @keyframes sparkle { 0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); } 50% { opacity: 1; transform: scale(1) rotate(180deg); } }
+        /* Robot Base Styles */
+        .robot-container {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto;
+        }
         
-        /* PixelBot Animations */
-        @keyframes pixelbot-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
-        @keyframes color-swirl { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @keyframes color-blob { 0%, 100% { transform: scale(0.8); opacity: 0.4; } 50% { transform: scale(1.2); opacity: 0.8; } }
+        /* WriteBot - Writer Robot with Pen Arm */
+        @keyframes writebot-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        @keyframes writebot-arm {
+            0%, 100% { transform: rotate(-10deg); }
+            50% { transform: rotate(10deg); }
+        }
+        @keyframes writebot-page {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(-30px) rotate(10deg); opacity: 0; }
+        }
         
-        /* KeyBot Animations */
-        @keyframes keybot-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
-        @keyframes node-pulse { 0%, 100% { transform: scale(0.8); opacity: 0.4; } 50% { transform: scale(1.1); opacity: 1; } }
-        @keyframes data-flow { 0% { stroke-dashoffset: 20; } 100% { stroke-dashoffset: 0; } }
+        /* PixelBot - Artist Robot with Brush */
+        @keyframes pixelbot-sway {
+            0%, 100% { transform: rotate(-3deg); }
+            50% { transform: rotate(3deg); }
+        }
+        @keyframes pixelbot-paint {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        @keyframes color-drop {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(20px) scale(0.5); opacity: 0; }
+        }
         
-        /* PressBot Animations */
-        @keyframes pressbot-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
-        @keyframes rocket-launch { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        @keyframes exhaust { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(20px) scale(0.5); } }
-        @keyframes globe-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* KeyBot - Analyst Robot with Scanner */
+        @keyframes keybot-scan {
+            0%, 100% { transform: translateX(-20px); opacity: 0.5; }
+            50% { transform: translateX(20px); opacity: 1; }
+        }
+        @keyframes keybot-blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        @keyframes data-particle {
+            0% { transform: translateY(0); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(-15px); opacity: 0; }
+        }
         
-        /* Gege Animations */
-        @keyframes gege-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
-        @keyframes orbit-1 { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @keyframes orbit-2 { 0% { transform: rotate(0deg); } 100% { transform: rotate(-360deg); } }
-        @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 20px rgba(139, 92, 246, 0.3); } 50% { box-shadow: 0 0 40px rgba(139, 92, 246, 0.6); } }
+        /* PressBot - Publisher Robot with Rocket Pack */
+        @keyframes pressbot-hover {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        @keyframes rocket-flame {
+            0%, 100% { transform: scaleY(1); opacity: 0.8; }
+            50% { transform: scaleY(1.3); opacity: 1; }
+        }
+        @keyframes paper-fly {
+            0% { transform: translateX(0) translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateX(40px) translateY(-30px) rotate(20deg); opacity: 0; }
+        }
         
-        .animate-writebot-float { animation: writebot-float 3s ease-in-out infinite; }
-        .animate-paper-1 { animation: paper-float-1 2s ease-in-out infinite; }
-        .animate-paper-2 { animation: paper-float-2 2.5s ease-in-out infinite 0.3s; }
-        .animate-steam { animation: steam 1.5s infinite; }
-        .animate-sparkle { animation: sparkle 1.5s infinite; }
+        /* Gege Bot */
+        @keyframes gege-float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-6px) rotate(2deg); }
+        }
+        @keyframes orbit {
+            0% { transform: rotate(0deg) translateX(25px) rotate(0deg); }
+            100% { transform: rotate(360deg) translateX(25px) rotate(-360deg); }
+        }
         
-        .animate-pixelbot-float { animation: pixelbot-float 3s ease-in-out infinite; }
-        .animate-color-swirl { animation: color-swirl 10s linear infinite; }
-        .animate-color-blob { animation: color-blob 2s infinite; }
+        /* Hover Info Card */
+        .bot-card {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .bot-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
+        }
+        .bot-card:hover .hover-info {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .hover-info {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-10px);
+            width: 280px;
+            background: rgba(17, 24, 39, 0.95);
+            border: 1px solid rgba(75, 85, 99, 0.5);
+            border-radius: 12px;
+            padding: 16px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        .hover-info::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-bottom: 8px solid rgba(17, 24, 39, 0.95);
+        }
         
-        .animate-keybot-float { animation: keybot-float 2s ease-in-out infinite; }
-        .animate-node-pulse { animation: node-pulse 1.5s infinite; }
-        .animate-data-flow { animation: data-flow 1s linear infinite; }
-        
-        .animate-pressbot-float { animation: pressbot-float 2s ease-in-out infinite; }
-        .animate-rocket { animation: rocket-launch 0.8s ease-in-out infinite; }
-        .animate-exhaust { animation: exhaust 0.8s infinite; }
-        .animate-globe { animation: globe-spin 8s linear infinite; }
-        
-        .animate-gege-float { animation: gege-float 3s ease-in-out infinite; }
-        .animate-orbit-1 { animation: orbit-1 8s linear infinite; }
-        .animate-orbit-2 { animation: orbit-2 12s linear infinite; }
-        .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
-        
+        /* Draggable Activity Log */
         .draggable { position: fixed; cursor: move; user-select: none; z-index: 50; }
         .draggable.dragging { opacity: 0.8; z-index: 100; }
         
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #1f2937; }
         ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 3px; }
-        
-        .task-card { transition: all 0.2s ease; }
-        .task-card:hover { transform: translateX(4px); }
-        .bot-card { transition: all 0.3s ease; }
-        .bot-card:hover { transform: scale(1.02); box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5); }
-        
-        .gege-avatar { background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 50%, #3b82f6 100%); }
     </style>
 </head>
 <body class="min-h-screen p-6">
@@ -84,31 +143,24 @@
     <header class="mb-6">
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-gradient-to-br from-violet-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg animate-pulse-glow">
+                <div class="w-12 h-12 bg-gradient-to-br from-violet-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
                     <i data-lucide="bot" class="w-6 h-6 text-white"></i>
                 </div>
                 <div>
                     <h1 class="text-2xl font-bold text-white">Agent Command Center</h1>
-                    <p class="text-gray-400">5 Agents Online • Task Approval System</p>
+                    <p class="text-gray-400">5 Agents Online • Hover bots to see skills</p>
                 </div>
-            </div>
-            <div class="flex items-center gap-3">
-                <span class="px-3 py-1.5 bg-violet-500/20 text-violet-400 rounded-full text-sm font-medium border border-violet-500/30">
-                    <i data-lucide="shield-check" class="w-4 h-4 inline mr-1"></i>
-                    Approval Mode
-                </span>
             </div>
         </div>
     </header>
 
-    <!-- 5 Bot Grid -->
+    <!-- Bot Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
         
         <!-- Gege Bot -->
-        <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 border border-violet-500/30 cursor-pointer overflow-hidden group" onclick="openGegePanel()">
-            <div class="absolute inset-0 bg-gradient-to-br from-violet-500/10 via-pink-500/10 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 border border-violet-500/30 cursor-pointer overflow-hidden" onclick="openGegePanel()">
             <div class="absolute top-3 right-3">
-                <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-violet-500/20 text-violet-400 border border-violet-500/40 animate-pulse">GEGE</span>
+                <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-violet-500/20 text-violet-400 border border-violet-500/40">GEGE</span>
             </div>
             
             <div class="relative z-10">
@@ -116,24 +168,52 @@
                 <p class="text-xs text-gray-400 mb-3">Your Personal Assistant</p>
             </div>
             
-            <!-- Gege Animated Avatar -->
+            <!-- Gege Robot SVG -->
             <div class="flex justify-center py-3">
-                <div class="relative w-20 h-20 flex items-center justify-center">
-                    <div class="absolute inset-0 gege-avatar rounded-full blur-xl opacity-50 animate-pulse"></div>
-                    <div class="relative z-10 w-16 h-16 gege-avatar rounded-2xl flex items-center justify-center shadow-lg animate-gege-float">
-                        <i data-lucide="sparkles" class="w-8 h-8 text-white"></i>
-                    </div>
-                    <!-- Orbiting elements -->
-                    <div class="absolute inset-0 animate-orbit-1">
-                        <div class="absolute top-0 left-1/2 w-2 h-2 bg-violet-400 rounded-full -translate-x-1/2"></div>
-                    </div>
-                    <div class="absolute inset-0 animate-orbit-2">
-                        <div class="absolute bottom-0 left-1/2 w-1.5 h-1.5 bg-pink-400 rounded-full -translate-x-1/2"></div>
-                    </div>
+                <div class="relative w-24 h-24">
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <!-- Glow -->
+                        <circle cx="50" cy="50" r="35" fill="url(#gegeGrad)" opacity="0.3">
+                            <animate attributeName="r" values="35;40;35" dur="2s" repeatCount="indefinite"/>
+                        </circle>
+                        <!-- Body -->
+                        <rect x="30" y="35" width="40" height="35" rx="8" fill="url(#gegeGrad)"/>
+                        <!-- Head -->
+                        <circle cx="50" cy="28" r="15" fill="url(#gegeGrad)"/>
+                        <!-- Eyes -->
+                        <circle cx="45" cy="26" r="3" fill="white">
+                            <animate attributeName="opacity" values="1;0.3;1" dur="3s" repeatCount="indefinite"/>
+                        </circle>
+                        <circle cx="55" cy="26" r="3" fill="white">
+                            <animate attributeName="opacity" values="1;0.3;1" dur="3s" repeatCount="indefinite"/>
+                        </circle>
+                        
+                        <!-- Arms -->
+                        <rect x="20" y="40" width="8" height="20" rx="4" fill="#8b5cf6">
+                            <animateTransform attributeName="transform" type="rotate" values="-10 24 40;10 24 40;-10 24 40" dur="2s" repeatCount="indefinite"/>
+                        </rect>
+                        <rect x="72" y="40" width="8" height="20" rx="4" fill="#8b5cf6">
+                            <animateTransform attributeName="transform" type="rotate" values="10 76 40;-10 76 40;10 76 40" dur="2s" repeatCount="indefinite"/>
+                        </rect>
+                        
+                        <!-- Orbiting elements -->
+                        <circle cx="50" cy="50" r="4" fill="#ec4899">
+                            <animateMotion dur="4s" repeatCount="indefinite" path="M 0,0 m -30,0 a 30,30 0 1,0 60,0 a 30,30 0 1,0 -60,0"/>
+                        </circle>
+                        <circle cx="50" cy="50" r="3" fill="#3b82f6">
+                            <animateMotion dur="6s" repeatCount="indefinite" path="M 0,0 m 30,0 a 30,30 0 1,1 -60,0 a 30,30 0 1,1 60,0"/>
+                        </circle>
+                        
+                        <defs>
+                            <linearGradient id="gegeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#8b5cf6"/>
+                                <stop offset="50%" style="stop-color:#ec4899"/>
+                                <stop offset="100%" style="stop-color:#3b82f6"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
                 </div>
             </div>
-            
-            <p class="text-xs text-center text-violet-400 mb-3 h-4">"Click to view your tasks"</p>
             
             <div class="flex justify-center">
                 <div class="px-3 py-1.5 bg-violet-500/20 rounded-lg border border-violet-500/30">
@@ -143,8 +223,8 @@
             </div>
         </div>
 
-        <!-- WriteBot -->
-        <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 border border-gray-700/50 cursor-pointer overflow-hidden group">
+        <!-- WriteBot - Writer Robot -->
+        <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 border border-gray-700/50 overflow-hidden">
             <div class="absolute top-3 right-3">
                 <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40" id="writebot-status">IDLE</span>
             </div>
@@ -154,62 +234,88 @@
                 <p class="text-xs text-gray-400 mb-3">Content Writer</p>
             </div>
             
-            <!-- WriteBot Animated Avatar -->
+            <!-- WriteBot Robot SVG -->
             <div class="flex justify-center py-3">
-                <div class="relative w-20 h-20 flex items-center justify-center">
-                    <div class="absolute inset-0 bg-emerald-500/20 rounded-full blur-xl"></div>
-                    
-                    <!-- Floating papers -->
-                    <div class="absolute -top-2 -right-2 text-emerald-400 animate-paper-1">
-                        <i data-lucide="file-text" class="w-5 h-5"></i>
-                    </div>
-                    <div class="absolute -top-1 -left-3 text-emerald-300 animate-paper-2">
-                        <i data-lucide="file-text" class="w-4 h-4"></i>
-                    </div>
-                    
-                    <!-- Main avatar -->
-                    <div class="relative z-10 animate-writebot-float">
-                        <div class="w-16 h-16 bg-emerald-500 rounded-2xl flex items-center justify-center shadow-lg">
-                            <i data-lucide="pen-tool" class="w-8 h-8 text-white"></i>
-                        </div>
+                <div class="relative w-24 h-24">
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <!-- Body -->
+                        <rect x="30" y="40" width="40" height="35" rx="10" fill="#10b981"/>
+                        <!-- Screen/Face -->
+                        <rect x="35" y="45" width="30" height="20" rx="5" fill="#064e3b"/>
+                        <!-- Eyes -->
+                        <circle cx="42" cy="52" r="3" fill="#34d399">
+                            <animate attributeName="opacity" values="1;0.5;1" dur="2s" repeatCount="indefinite"/>
+                        </circle>
+                        <circle cx="58" cy="52" r="3" fill="#34d399">
+                            <animate attributeName="opacity" values="1;0.5;1" dur="2s" repeatCount="indefinite"/>
+                        </circle>
                         
-                        <!-- Coffee cup -->
-                        <div class="absolute -bottom-1 -right-2 bg-amber-800 rounded-lg p-1">
-                            <i data-lucide="coffee" class="w-3 h-3 text-amber-100"></i>
-                            <div class="absolute -top-3 left-1/2 -translate-x-1/2 animate-steam">
-                                <div class="w-1 h-2 bg-gray-400 rounded-full"></div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Sparkles -->
-                    <div class="absolute top-0 right-0 text-yellow-400 animate-sparkle">
-                        <i data-lucide="sparkles" class="w-3 h-3"></i>
-                    </div>
+                        <!-- Writing Arm -->
+                        <rect x="65" y="45" width="20" height="6" rx="3" fill="#059669">
+                            <animateTransform attributeName="transform" type="rotate" values="-15 65 48;15 65 48;-15 65 48" dur="1s" repeatCount="indefinite"/>
+                        </rect>
+                        <!-- Pen tip -->
+                        <polygon points="85,46 90,48 85,50" fill="#fbbf24">
+                            <animateTransform attributeName="transform" type="rotate" values="-15 65 48;15 65 48;-15 65 48" dur="1s" repeatCount="indefinite"/>
+                        </polygon>
+                        
+                        <!-- Floating Pages -->
+                        <rect x="70" y="20" width="15" height="20" rx="2" fill="white" opacity="0.8">
+                            <animateTransform attributeName="transform" type="translate" values="0,0; 5,-15; 0,0" dur="3s" repeatCount="indefinite"/>
+                            <animateTransform attributeName="transform" type="rotate" values="0 77 30; 10 77 30; 0 77 30" dur="3s" repeatCount="indefinite" additive="sum"/>
+                        </rect>
+                        
+                        <!-- Left Arm holding paper -->
+                        <rect x="15" y="48" width="15" height="6" rx="3" fill="#059669"/>
+                        <rect x="10" y="42" width="12" height="18" rx="2" fill="white" opacity="0.9"/>
+                        
+                        <!-- Legs -->
+                        <rect x="35" y="75" width="10" height="15" rx="5" fill="#059669"/>
+                        <rect x="55" y="75" width="10" height="15" rx="5" fill="#059669"/>
+                    </svg>
                 </div>
             </div>
             
-            <p class="text-xs text-center text-emerald-400 mb-3 h-4">"Coffee's brewing..."</p>
-            
-            <div class="grid grid-cols-2 gap-2 mb-3">
-                <div class="p-2 bg-gray-900/50 rounded-lg text-center">
-                    <p class="text-lg font-bold text-emerald-400">247</p>
-                    <p class="text-[10px] text-gray-500 uppercase">Articles</p>
+            <!-- Hover Info -->
+            <div class="hover-info">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center">
+                        <i data-lucide="pen-tool" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-white">WriteBot</h4>
+                        <p class="text-xs text-emerald-400">Content Writer</p>
+                    </div>
                 </div>
-                <div class="p-2 bg-gray-900/50 rounded-lg text-center">
-                    <p class="text-lg font-bold text-emerald-400">98%</p>
-                    <p class="text-[10px] text-gray-500 uppercase">SEO</p>
+                <p class="text-sm text-gray-300 mb-3">I craft compelling content that ranks. From blog posts to ad copy, I write words that convert.</p>
+                <div class="space-y-2">
+                    <div class="flex items-center gap-2 text-xs text-gray-400">
+                        <i data-lucide="check" class="w-3 h-3 text-emerald-400"></i>
+                        SEO-optimized articles
+                    </div>
+                    <div class="flex items-center gap-2 text-xs text-gray-400">
+                        <i data-lucide="check" class="w-3 h-3 text-emerald-400"></i>
+                        Marketing copy & ads
+                    </div>
+                    <div class="flex items-center gap-2 text-xs text-gray-400">
+                        <i data-lucide="check" class="w-3 h-3 text-emerald-400"></i>
+                        Product descriptions
+                    </div>
+                    <div class="flex items-center gap-2 text-xs text-gray-400">
+                        <i data-lucide="check" class="w-3 h-3 text-emerald-400"></i>
+                        Social media content
+                    </div>
                 </div>
             </div>
             
             <button onclick="showTaskModal('writebot')" class="w-full py-2 rounded-lg font-semibold text-white text-sm bg-emerald-500 hover:bg-emerald-600 transition-colors flex items-center justify-center gap-2">
                 <i data-lucide="plus" class="w-4 h-4"></i>
-                Add Writing Task
+                Add Task
             </button>
         </div>
 
-        <!-- PixelBot -->
-        <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 border border-gray-700/50 cursor-pointer overflow-hidden group">
+        <!-- PixelBot - Artist Robot -->
+        <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 border border-gray-700/50 overflow-hidden">
             <div class="absolute top-3 right-3">
                 <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-violet-500/20 text-violet-400 border border-violet-500/40" id="pixelbot-status">IDLE</span>
             </div>
@@ -219,55 +325,98 @@
                 <p class="text-xs text-gray-400 mb-3">Image Generation</p>
             </div>
             
-            <!-- PixelBot Animated Avatar -->
+            <!-- PixelBot Robot SVG -->
             <div class="flex justify-center py-3">
-                <div class="relative w-20 h-20 flex items-center justify-center">
-                    <!-- Color swirl -->
-                    <div class="absolute inset-0 rounded-full opacity-30 animate-color-swirl" 
-                         style="background: conic-gradient(from 0deg, #8b5cf6, #ec4899, #3b82f6, #8b5cf6);"></div>
-                    
-                    <!-- Color blobs -->
-                    <div class="absolute top-2 right-2 w-4 h-4 rounded-full bg-pink-500 blur-sm animate-color-blob"></div>
-                    <div class="absolute bottom-4 right-0 w-3 h-3 rounded-full bg-violet-400 blur-sm animate-color-blob" style="animation-delay: 0.3s;"></div>
-                    <div class="absolute top-4 left-2 w-3 h-3 rounded-full bg-blue-400 blur-sm animate-color-blob" style="animation-delay: 0.6s;"></div>
-                    
-                    <!-- Main avatar -->
-                    <div class="relative z-10 animate-pixelbot-float">
-                        <div class="w-16 h-16 bg-violet-500 rounded-2xl flex items-center justify-center shadow-lg">
-                            <i data-lucide="image" class="w-8 h-8 text-white"></i>
-                        </div>
+                <div class="relative w-24 h-24">
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <!-- Body -->
+                        <rect x="30" y="40" width="40" height="35" rx="10" fill="#8b5cf6"/>
+                        
+                        <!-- Screen/Face -->
+                        <rect x="35" y="45" width="30" height="20" rx="5" fill="#4c1d95"/>
+                        
+                        <!-- Eyes -->
+                        <circle cx="42" cy="52" r="3" fill="#a78bfa">
+                            <animate attributeName="fill" values="#a78bfa;#ec4899;#a78bfa" dur="2s" repeatCount="indefinite"/>
+                        </circle>
+                        <circle cx="58" cy="52" r="3" fill="#a78bfa">
+                            <animate attributeName="fill" values="#a78bfa;#3b82f6;#a78bfa" dur="2s" repeatCount="indefinite"/>
+                        </circle>
+                        
+                        <!-- Paintbrush Arm -->
+                        <rect x="65" y="42" width="25" height="6" rx="3" fill="#7c3aed">
+                            <animateTransform attributeName="transform" type="rotate" values="0 65 45;-20 65 45;0 65 45" dur="1.5s" repeatCount="indefinite"/>
+                        </rect>
                         
                         <!-- Paintbrush -->
-                        <div class="absolute -bottom-2 -right-3 animate-writebot-float">
-                            <div class="bg-amber-700 rounded-lg p-1.5 shadow-md">
-                                <div class="w-1 h-4 bg-amber-200 rounded-t"></div>
-                            </div>
-                        </div>
-                    </div>
+                        <rect x="88" y="40" width="4" height="15" fill="#fbbf24">
+                            <animateTransform attributeName="transform" type="rotate" values="0 65 45;-20 65 45;0 65 45" dur="1.5s" repeatCount="indefinite"/>
+                        </rect>
+                        
+                        <!-- Paint drops -->
+                        <circle cx="90" cy="60" r="3" fill="#ec4899">
+                            <animate attributeName="cy" values="60;80" dur="1s" repeatCount="indefinite"/>
+                            <animate attributeName="opacity" values="1;0" dur="1s" repeatCount="indefinite"/>
+                        </circle>
+                        
+                        <!-- Palette on left arm -->
+                        <ellipse cx="20" cy="55" rx="12" ry="8" fill="#fbbf24"/>
+                        
+                        <!-- Paint dots on palette -->
+                        <circle cx="16" cy="53" r="2" fill="#ec4899"/>
+                        <circle cx="22" cy="52" r="2" fill="#3b82f6"/>
+                        <circle cx="20" cy="58" r="2" fill="#10b981"/>
+                        
+                        <!-- Left arm -->
+                        <rect x="25" y="50" width="8" height="6" rx="3" fill="#7c3aed"/>
+                        
+                        <!-- Legs -->
+                        <rect x="35" y="75" width="10" height="15" rx="5" fill="#7c3aed"/>
+                        <rect x="55" y="75" width="10" height="15" rx="5" fill="#7c3aed"/>
+                    </svg>
                 </div>
             </div>
             
-            <p class="text-xs text-center text-violet-400 mb-3 h-4">"Mixing the palette..."</p>
-            
-            <div class="grid grid-cols-2 gap-2 mb-3">
-                <div class="p-2 bg-gray-900/50 rounded-lg text-center">
-                    <p class="text-lg font-bold text-violet-400">1.2k</p>
-                    <p class="text-[10px] text-gray-500 uppercase">Images</p>
+            <!-- Hover Info -->
+            <div class="hover-info">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-10 h-10 bg-violet-500 rounded-lg flex items-center justify-center">
+                        <i data-lucide="image" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-white">PixelBot</h4>
+                        <p class="text-xs text-violet-400">Image Generation</p>
+                    </div>
                 </div>
-                <div class="p-2 bg-gray-900/50 rounded-lg text-center">
-                    <p class="text-lg font-bold text-violet-400">4s</p>
-                    <p class="text-[10px] text-gray-500 uppercase">Avg</p>
+                <p class="text-sm text-gray-300 mb-3">I create stunning visuals from your imagination. From hero images to social media graphics, I paint pixels that pop.</p>
+                <div class="space-y-2">
+                    <div class="flex items-center gap-2 text-xs text-gray-400">
+                        <i data-lucide="check" class="w-3 h-3 text-violet-400"></i>
+                        Hero images & banners
+                    </div>
+                    <div class="flex items-center gap-2 text-xs text-gray-400">
+                        <i data-lucide="check" class="w-3 h-3 text-violet-400"></i>
+                        Social media graphics
+                    </div>
+                    <div class="flex items-center gap-2 text-xs text-gray-400">
+                        <i data-lucide="check" class="w-3 h-3 text-violet-400"></i>
+                        Product photography
+                    </div>
+                    <div class="flex items-center gap-2 text-xs text-gray-400">
+                        <i data-lucide="check" class="w-3 h-3 text-violet-400"></i>
+                        Illustrations & art
+                    </div>
                 </div>
             </div>
             
             <button onclick="showTaskModal('pixelbot')" class="w-full py-2 rounded-lg font-semibold text-white text-sm bg-violet-500 hover:bg-violet-600 transition-colors flex items-center justify-center gap-2">
                 <i data-lucide="plus" class="w-4 h-4"></i>
-                Add Image Task
+                Add Task
             </button>
         </div>
 
-        <!-- KeyBot -->
-        <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 border border-gray-700/50 cursor-pointer overflow-hidden group">
+        <!-- KeyBot - Analyst Robot -->
+        <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 border border-gray-700/50 overflow-hidden">
             <div class="absolute top-3 right-3">
                 <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-amber-500/20 text-amber-400 border border-amber-500/40" id="keybot-status">IDLE</span>
             </div>
@@ -277,55 +426,119 @@
                 <p class="text-xs text-gray-400 mb-3">Keyword Mapper</p>
             </div>
             
-            <!-- KeyBot Animated Avatar -->
+            <!-- KeyBot Robot SVG -->
             <div class="flex justify-center py-3">
-                <div class="relative w-20 h-20 flex items-center justify-center">
-                    <!-- Grid background -->
-                    <div class="absolute inset-0 rounded-full opacity-20" 
-                         style="background-image: linear-gradient(rgba(245, 158, 11, 0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(245, 158, 11, 0.2) 1px, transparent 1px); background-size: 10px 10px;"></div>
-                    
-                    <!-- Data nodes -->
-                    <div class="absolute top-3 left-3 w-3 h-3 rounded-full border-2 border-amber-500 animate-node-pulse"></div>
-                    <div class="absolute top-3 right-3 w-3 h-3 rounded-full border-2 border-amber-500 animate-node-pulse" style="animation-delay: 0.3s;"></div>
-                    <div class="absolute bottom-3 left-3 w-3 h-3 rounded-full border-2 border-amber-500 animate-node-pulse" style="animation-delay: 0.6s;"></div>
-                    <div class="absolute bottom-3 right-3 w-3 h-3 rounded-full border-2 border-amber-500 animate-node-pulse" style="animation-delay: 0.9s;"></div>
-                    
-                    <!-- Connection lines -->
-                    <svg class="absolute inset-0 w-full h-full pointer-events-none opacity-50">
-                        <line x1="30%" y1="30%" x2="70%" y2="30%" stroke="#f59e0b" stroke-width="1" stroke-dasharray="4 4" class="animate-data-flow"></line>
-                        <line x1="30%" y1="70%" x2="70%" y2="70%" stroke="#f59e0b" stroke-width="1" stroke-dasharray="4 4" class="animate-data-flow" style="animation-delay: 0.3s;"></line>
+                <div class="relative w-24 h-24">
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <!-- Body -->
+                        <rect x="30" y="40" width="40" height="35" rx="10" fill="#f59e0b"/>
+                        
+                        <!-- Screen/Face -->
+                        <rect x="35" y="45" width="30" height="20" rx="5" fill="#78350f"/>
+                        
+                        <!-- Scanner line -->
+                        <rect x="35" y="45" width="30" height="2" fill="#fbbf24" opacity="0.8">
+                            <animate attributeName="y" values="45;63;45" dur="2s" repeatCount="indefinite"/>
+                        </rect>
+                        
+                        <!-- Eyes -->
+                        <circle cx="42" cy="52" r="3" fill="#fcd34d">
+                            <animate attributeName="opacity" values="1;0.3;1" dur="1s" repeatCount="indefinite"/>
+                        </circle>
+                        
+                        <circle cx="58" cy="52" r="3" fill="#fcd34d">
+                            <animate attributeName="opacity" values="1;0.3;1" dur="1s" repeatCount="indefinite"/>
+                        </circle>
+                        
+                        <!-- Magnifying glass arm -->
+                        <rect x="65" y="48" width="20" height="4" rx="2" fill="#d97706"/>
+                        
+                        <!-- Magnifying glass -->
+                        <circle cx="88" cy="50" r="8" fill="none" stroke="#fcd34d" stroke-width="2"/>
+                        
+                        <line x1="93" y1="54" x2="97" y2="58" stroke="#fcd34d" stroke-width="2" stroke-linecap="round"/>
+                        
+                        <!-- Data particles -->
+                        <rect x="75" y="30" width="3" height="3" fill="#34d399">
+                            <animate attributeName="y" values="30;20" dur="1.5s" repeatCount="indefinite"/>
+                            <animate attributeName="opacity" values="0;1;0" dur="1.5s" repeatCount="indefinite"/>
+                        </rect>
+                        
+                        <rect x="82" y="35" width="2" height="2" fill="#60a5fa">
+                            <animate attributeName="y" values="35;25" dur="1.2s" repeatCount="indefinite"/>
+                            <animate attributeName="opacity" values="0;1;0" dur="1.2s" repeatCount="indefinite"/>
+                        </rect>
+                        
+                        <rect x="70" y="38" width="2" height="2" fill="#f472b6">
+                            <animate attributeName="y" values="38;28" dur="1.8s" repeatCount="indefinite"/>
+                            <animate attributeName="opacity" values="0;1;0" dur="1.8s" repeatCount="indefinite"/>
+                        </rect>
+                        
+                        <!-- Left arm with data pad -->
+                        <rect x="12" y="48" width="18" height="4" rx="2" fill="#d97706"/>
+                        
+                        <rect x="5" y="42" width="15" height="20" rx="3" fill="#1f2937" stroke="#f59e0b" stroke-width="1"/>
+                        
+                        <!-- Data bars on pad -->
+                        <rect x="8" y="46" width="9" height="2" fill="#34d399">
+                            <animate attributeName="width" values="9;5;9" dur="1s" repeatCount="indefinite"/>
+                        </rect>
+                        
+                        <rect x="8" y="50" width="6" height="2" fill="#60a5fa">
+                            <animate attributeName="width" values="6;10;6" dur="1.2s" repeatCount="indefinite"/>
+                        </rect>
+                        
+                        <rect x="8" y="54" width="7" height="2" fill="#f472b6">
+                            <animate attributeName="width" values="7;4;7" dur="0.8s" repeatCount="indefinite"/>
+                        </rect>
+                        
+                        <!-- Legs -->
+                        <rect x="35" y="75" width="10" height="15" rx="5" fill="#d97706"/>
+                        <rect x="55" y="75" width="10" height="15" rx="5" fill="#d97706"/>
                     </svg>
-                    
-                    <!-- Main avatar -->
-                    <div class="relative z-10 animate-keybot-float">
-                        <div class="w-16 h-16 bg-amber-500 rounded-2xl flex items-center justify-center shadow-lg">
-                            <i data-lucide="search" class="w-8 h-8 text-white"></i>
-                        </div>
-                    </div>
                 </div>
             </div>
             
-            <p class="text-xs text-center text-amber-400 mb-3 h-4">"Analyzing patterns..."</p>
-            
-            <div class="grid grid-cols-2 gap-2 mb-3">
-                <div class="p-2 bg-gray-900/50 rounded-lg text-center">
-                    <p class="text-lg font-bold text-amber-400">8.5k</p>
-                    <p class="text-[10px] text-gray-500 uppercase">Keywords</p>
+            <!-- Hover Info -->
+            <div class="hover-info">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-10 h-10 bg-amber-500 rounded-lg flex items-center justify-center">
+                        <i data-lucide="search" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-white">KeyBot</h4>
+                        <p class="text-xs text-amber-400">Keyword Mapper</p>
+                    </div>
                 </div>
-                <div class="p-2 bg-gray-900/50 rounded-lg text-center">
-                    <p class="text-lg font-bold text-amber-400">92%</p>
-                    <p class="text-[10px] text-gray-500 uppercase">Accuracy</p>
+                <p class="text-sm text-gray-300 mb-3">I map the path to search dominance. I find keywords that rank and analyze your competition.</p>
+                <div class="space-y-2">
+                    <div class="flex items-center gap-2 text-xs text-gray-400">
+                        <i data-lucide="check" class="w-3 h-3 text-amber-400"></i>
+                        Keyword research & analysis
+                    </div>
+                    <div class="flex items-center gap-2 text-xs text-gray-400">
+                        <i data-lucide="check" class="w-3 h-3 text-amber-400"></i>
+                        Competitor analysis
+                    </div>
+                    <div class="flex items-center gap-2 text-xs text-gray-400">
+                        <i data-lucide="check" class="w-3 h-3 text-amber-400"></i>
+                        Content cluster mapping
+                    </div>
+                    <div class="flex items-center gap-2 text-xs text-gray-400">
+                        <i data-lucide="check" class="w-3 h-3 text-amber-400"></i>
+                        Search trend insights
+                    </div>
                 </div>
             </div>
             
             <button onclick="showTaskModal('keybot')" class="w-full py-2 rounded-lg font-semibold text-white text-sm bg-amber-500 hover:bg-amber-600 transition-colors flex items-center justify-center gap-2">
                 <i data-lucide="plus" class="w-4 h-4"></i>
-                Add SEO Task
+                Add Task
             </button>
         </div>
 
-        <!-- PressBot -->
-        <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 border border-gray-700/50 cursor-pointer overflow-hidden group">
+        <!-- PressBot - Publisher Robot -->
+        <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 border border-gray-700/50 overflow-hidden">
             <div class="absolute top-3 right-3">
                 <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-blue-500/20 text-blue-400 border border-blue-500/40" id="pressbot-status">IDLE</span>
             </div>
@@ -335,58 +548,125 @@
                 <p class="text-xs text-gray-400 mb-3">WordPress Publisher</p>
             </div>
             
-            <!-- PressBot Animated Avatar -->
+            <!-- PressBot Robot SVG -->
             <div class="flex justify-center py-3">
-                <div class="relative w-20 h-20 flex items-center justify-center">
-                    <!-- Launch pad glow -->
-                    <div class="absolute inset-0 bg-blue-500/30 rounded-full blur-xl animate-pulse"></div>
-                    
-                    <!-- Exhaust particles -->
-                    <div class="absolute bottom-2 left-1/2 -translate-x-1/2">
-                        <div class="absolute w-2 h-2 rounded-full bg-orange-400 animate-exhaust"></div>
-                        <div class="absolute w-2 h-2 rounded-full bg-red-400 animate-exhaust" style="animation-delay: 0.1s; left: 5px;"></div>
-                        <div class="absolute w-2 h-2 rounded-full bg-yellow-400 animate-exhaust" style="animation-delay: 0.2s; left: -5px;"></div>
-                    </div>
-                    
-                    <!-- Main avatar -->
-                    <div class="relative z-10 animate-pressbot-float">
-                        <div class="w-16 h-16 bg-blue-500 rounded-2xl flex items-center justify-center shadow-lg">
-                            <i data-lucide="rocket" class="w-8 h-8 text-white"></i>
-                        </div>
+                <div class="relative w-24 h-24">
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <!-- Rocket pack -->
+                        <rect x="25" y="35" width="10" height="25" rx="5" fill="#7c3aed"/>
+                        
+                        <rect x="65" y="35" width="10" height="25" rx="5" fill="#7c3aed"/>
+                        
+                        <!-- Flames -->
+                        <polygon points="28,62 30,72 32,62" fill="#f97316">
+                            <animate attributeName="opacity" values="0.6;1;0.6" dur="0.3s" repeatCount="indefinite"/>
+                            <animateTransform attributeName="transform" type="scale" values="1;1.3;1" dur="0.3s" repeatCount="indefinite"/>
+                        </polygon>
+                        
+                        <polygon points="68,62 70,72 72,62" fill="#f97316">
+                            <animate attributeName="opacity" values="0.6;1;0.6" dur="0.3s" repeatCount="indefinite" begin="0.15s"/>
+                            <animateTransform attributeName="transform" type="scale" values="1;1.3;1" dur="0.3s" repeatCount="indefinite" begin="0.15s"/>
+                        </polygon>
+                        
+                        <!-- Body -->
+                        <rect x="35" y="40" width="30" height="30" rx="8" fill="#3b82f6"/>
+                        
+                        <!-- Screen/Face -->
+                        <rect x="38" y="44" width="24" height="16" rx="4" fill="#1e3a8a"/>
+                        
+                        <!-- Eyes -->
+                        <circle cx="45" cy="50" r="2.5" fill="#60a5fa">
+                            <animate attributeName="cy" values="50;48;50" dur="0.5s" repeatCount="indefinite"/>
+                        </circle>
+                        
+                        <circle cx="55" cy="50" r="2.5" fill="#60a5fa">
+                            <animate attributeName="cy" values="50;48;50" dur="0.5s" repeatCount="indefinite"/>
+                        </circle>
+                        
+                        <!-- Smile -->
+                        <path d="M 45 56 Q 50 59 55 56" stroke="#60a5fa" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                        
+                        <!-- Arms -->
+                        <rect x="22" y="48" width="10" height="6" rx="3" fill="#2563eb"/>
+                        
+                        <rect x="68" y="48" width="10" height="6" rx="3" fill="#2563eb"/>
                         
                         <!-- Flying newspaper -->
-                        <div class="absolute -top-2 -right-4 bg-white rounded shadow-md p-1 animate-paper-1">
-                            <div class="w-4 h-5 bg-gray-200 rounded-sm"></div>
-                        </div>
-                    </div>
-                    
-                    <!-- Globe -->
-                    <div class="absolute -bottom-1 -left-2 text-blue-400 animate-globe">
-                        <i data-lucide="globe" class="w-4 h-4"></i>
-                    </div>
+                        <rect x="75" y="25" width="18" height="22" rx="2" fill="white" stroke="#e5e7eb" stroke-width="1">
+                            <animateTransform attributeName="transform" type="translate" values="0,0; 15,-20" dur="2s" repeatCount="indefinite"/>
+                            <animateTransform attributeName="transform" type="rotate" values="0 84 36; 15 84 36" dur="2s" repeatCount="indefinite" additive="sum"/>
+                            <animate attributeName="opacity" values="1;0" dur="2s" repeatCount="indefinite"/>
+                        </rect>
+                        
+                        <!-- Lines on newspaper -->
+                        <line x1="78" y1="30" x2="90" y2="30" stroke="#d1d5db" stroke-width="1">
+                            <animateTransform attributeName="transform" type="translate" values="0,0; 15,-20" dur="2s" repeatCount="indefinite"/>
+                            <animate attributeName="opacity" values="1;0" dur="2s" repeatCount="indefinite"/>
+                        </line>
+                        
+                        <line x1="78" y1="35" x2="88" y2="35" stroke="#d1d5db" stroke-width="1">
+                            <animateTransform attributeName="transform" type="translate" values="0,0; 15,-20" dur="2s" repeatCount="indefinite"/>
+                            <animate attributeName="opacity" values="1;0" dur="2s" repeatCount="indefinite"/>
+                        </line>
+                        
+                        <line x1="78" y1="40" x2="90" y2="40" stroke="#d1d5db" stroke-width="1">
+                            <animateTransform attributeName="transform" type="translate" values="0,0; 15,-20" dur="2s" repeatCount="indefinite"/>
+                            <animate attributeName="opacity" values="1;0" dur="2s" repeatCount="indefinite"/>
+                        </line>
+                        
+                        <!-- WP logo on chest -->
+                        <circle cx="50" cy="65" r="6" fill="white"/>
+                        
+                        <text x="50" y="68" text-anchor="middle" font-size="8" font-weight="bold" fill="#3b82f6">W</text>
+                        
+                        <!-- Legs -->
+                        <rect x="38" y="70" width="8" height="12" rx="4" fill="#2563eb"/>
+                        
+                        <rect x="54" y="70" width="8" height="12" rx="4" fill="#2563eb"/>
+                    </svg>
                 </div>
             </div>
             
-            <p class="text-xs text-center text-blue-400 mb-3 h-4">"Ready to launch!"</p>
-            
-            <div class="grid grid-cols-2 gap-2 mb-3">
-                <div class="p-2 bg-gray-900/50 rounded-lg text-center">
-                    <p class="text-lg font-bold text-blue-400">432</p>
-                    <p class="text-[10px] text-gray-500 uppercase">Posts</p>
+            <!-- Hover Info -->
+            <div class="hover-info">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+                        <i data-lucide="rocket" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-white">PressBot</h4>
+                        <p class="text-xs text-blue-400">WordPress Publisher</p>
+                    </div>
                 </div>
-                <div class="p-2 bg-gray-900/50 rounded-lg text-center">
-                    <p class="text-lg font-bold text-blue-400">12</p>
-                    <p class="text-[10px] text-gray-500 uppercase">Sites</p>
+                <p class="text-sm text-gray-300 mb-3">I launch your content to the world. With rocket speed, I publish to WordPress and get your content live instantly.</p>
+                <div class="space-y-2">
+                    <div class="flex items-center gap-2 text-xs text-gray-400">
+                        <i data-lucide="check" class="w-3 h-3 text-blue-400"></i>
+                        Instant WordPress publishing
+                    </div>
+                    <div class="flex items-center gap-2 text-xs text-gray-400">
+                        <i data-lucide="check" class="w-3 h-3 text-blue-400"></i>
+                        Scheduled posts
+                    </div>
+                    <div class="flex items-center gap-2 text-xs text-gray-400">
+                        <i data-lucide="check" class="w-3 h-3 text-blue-400"></i>
+                        Multi-site management
+                    </div>
+                    <div class="flex items-center gap-2 text-xs text-gray-400">
+                        <i data-lucide="check" class="w-3 h-3 text-blue-400"></i>
+                        Auto-formatting & SEO
+                    </div>
                 </div>
             </div>
             
             <button onclick="showTaskModal('pressbot')" class="w-full py-2 rounded-lg font-semibold text-white text-sm bg-blue-500 hover:bg-blue-600 transition-colors flex items-center justify-center gap-2">
                 <i data-lucide="plus" class="w-4 h-4"></i>
-                Add Publish Task
+                Add Task
             </button>
         </div>
     </div>
 
+    <!-- [Rest of the code: Draggable Activity Log, Gege Panel, Task Modal, JavaScript - same as before] -->
     <!-- Draggable Activity Log -->
     <div id="activity-log" class="draggable bg-gray-800/90 backdrop-blur-md rounded-xl border border-gray-700/50 shadow-2xl" style="bottom: 20px; right: 20px; width: 380px; max-height: 400px;">
         <div class="drag-handle flex items-center justify-between p-3 border-b border-gray-700/50 cursor-move bg-gray-700/30 rounded-t-xl">
@@ -419,7 +699,7 @@
         <div class="bg-gray-800 rounded-2xl border border-violet-500/30 w-full max-w-4xl max-h-[80vh] overflow-hidden shadow-2xl m-4">
             <div class="p-4 border-b border-gray-700/50 flex items-center justify-between bg-gradient-to-r from-violet-500/10 to-pink-500/10">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 gege-avatar rounded-xl flex items-center justify-center">
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #8b5cf6, #ec4899)">
                         <i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
                     </div>
                     <div>
@@ -441,10 +721,6 @@
                         Add Task
                     </button>
                 </div>
-                <p class="text-xs text-gray-500 mt-2">
-                    <i data-lucide="info" class="w-3 h-3 inline mr-1"></i>
-                    Gege will automatically categorize tasks. You approve before agents start working.
-                </p>
             </div>
             
             <div class="p-4 overflow-y-auto" style="max-height: 50vh;">
@@ -604,25 +880,19 @@
         
         function addTaskToGege(description, suggestedBot = null) {
             let assignedBot = suggestedBot;
-            let category = 'general';
             const lowerDesc = description.toLowerCase();
             
             if (!assignedBot) {
-                if (lowerDesc.includes('write') || lowerDesc.includes('blog') || lowerDesc.includes('article') || lowerDesc.includes('content') || lowerDesc.includes('copy')) {
+                if (lowerDesc.includes('write') || lowerDesc.includes('blog') || lowerDesc.includes('article') || lowerDesc.includes('content')) {
                     assignedBot = 'writebot';
-                    category = 'writing';
-                } else if (lowerDesc.includes('image') || lowerDesc.includes('picture') || lowerDesc.includes('photo') || lowerDesc.includes('generate') || lowerDesc.includes('draw')) {
+                } else if (lowerDesc.includes('image') || lowerDesc.includes('picture') || lowerDesc.includes('photo') || lowerDesc.includes('generate')) {
                     assignedBot = 'pixelbot';
-                    category = 'image';
-                } else if (lowerDesc.includes('keyword') || lowerDesc.includes('seo') || lowerDesc.includes('search') || lowerDesc.includes('rank')) {
+                } else if (lowerDesc.includes('keyword') || lowerDesc.includes('seo') || lowerDesc.includes('search')) {
                     assignedBot = 'keybot';
-                    category = 'seo';
-                } else if (lowerDesc.includes('publish') || lowerDesc.includes('post') || lowerDesc.includes('wordpress') || lowerDesc.includes('wp')) {
+                } else if (lowerDesc.includes('publish') || lowerDesc.includes('post') || lowerDesc.includes('wordpress')) {
                     assignedBot = 'pressbot';
-                    category = 'publishing';
                 } else {
                     assignedBot = 'writebot';
-                    category = 'writing';
                 }
             }
             
@@ -638,24 +908,17 @@
                 description: description,
                 bot: assignedBot,
                 botName: botNames[assignedBot],
-                category: category,
                 status: 'pending',
                 createdAt: new Date()
             };
             
             tasks.push(task);
             renderTasks();
-            addActivity(`New task added to Gege: "${description.substring(0, 30)}..."`);
-            
-            const pendingCount = tasks.filter(t => t.status === 'pending').length;
-            document.getElementById('gege-task-count').textContent = pendingCount;
+            addActivity(`New task: "${description.substring(0, 30)}..."`);
+            document.getElementById('gege-task-count').textContent = tasks.filter(t => t.status === 'pending').length;
         }
         
         function renderTasks() {
-            const pendingContainer = document.getElementById('pending-tasks');
-            const progressContainer = document.getElementById('progress-tasks');
-            const completedContainer = document.getElementById('completed-tasks');
-            
             const pending = tasks.filter(t => t.status === 'pending');
             const inProgress = tasks.filter(t => t.status === 'approved');
             const completed = tasks.filter(t => t.status === 'completed');
@@ -663,8 +926,8 @@
             document.getElementById('pending-count').textContent = pending.length;
             document.getElementById('progress-count').textContent = inProgress.length;
             document.getElementById('completed-count').textContent = completed.length;
-            document.getElementById('gege-task-count').textContent = pending.length;
             
+            const pendingContainer = document.getElementById('pending-tasks');
             if (pending.length === 0) {
                 pendingContainer.innerHTML = '<p class="text-sm text-gray-500 italic">No pending tasks</p>';
             } else {
@@ -673,55 +936,37 @@
                         <div class="flex items-start justify-between">
                             <div class="flex-1">
                                 <p class="text-sm text-white mb-1">${task.description}</p>
-                                <div class="flex items-center gap-2">
-                                    <span class="px-2 py-0.5 bg-gray-700 rounded text-xs text-gray-300">${task.botName}</span>
-                                    <span class="px-2 py-0.5 bg-amber-500/20 text-amber-400 rounded text-xs">Pending</span>
-                                </div>
+                                <span class="px-2 py-0.5 bg-gray-700 rounded text-xs text-gray-300">${task.botName}</span>
                             </div>
-                            <button onclick="approveTask(${task.id})" class="ml-2 px-3 py-1 bg-emerald-500 hover:bg-emerald-600 rounded text-xs font-semibold text-white flex items-center gap-1">
-                                <i data-lucide="check" class="w-3 h-3"></i>
-                                Approve
-                            </button>
+                            <button onclick="approveTask(${task.id})" class="ml-2 px-3 py-1 bg-emerald-500 hover:bg-emerald-600 rounded text-xs font-semibold text-white">Approve</button>
                         </div>
                     </div>
                 `).join('');
             }
             
+            const progressContainer = document.getElementById('progress-tasks');
             if (inProgress.length === 0) {
                 progressContainer.innerHTML = '<p class="text-sm text-gray-500 italic">No tasks in progress</p>';
             } else {
                 progressContainer.innerHTML = inProgress.map(task => `
                     <div class="task-card bg-gray-900/50 border border-blue-500/30 rounded-lg p-3">
-                        <div class="flex items-center gap-2">
-                            <div class="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
-                            <p class="text-sm text-white">${task.description}</p>
-                        </div>
-                        <div class="flex items-center gap-2 mt-1">
-                            <span class="px-2 py-0.5 bg-gray-700 rounded text-xs text-gray-300">${task.botName}</span>
-                            <span class="px-2 py-0.5 bg-blue-500/20 text-blue-400 rounded text-xs">Working...</span>
-                        </div>
+                        <p class="text-sm text-white">${task.description}</p>
+                        <span class="px-2 py-0.5 bg-blue-500/20 text-blue-400 rounded text-xs">${task.botName} working...</span>
                     </div>
                 `).join('');
             }
             
+            const completedContainer = document.getElementById('completed-tasks');
             if (completed.length === 0) {
                 completedContainer.innerHTML = '<p class="text-sm text-gray-500 italic">No completed tasks</p>';
             } else {
                 completedContainer.innerHTML = completed.map(task => `
                     <div class="task-card bg-gray-900/50 border border-emerald-500/30 rounded-lg p-3 opacity-60">
-                        <div class="flex items-center gap-2">
-                            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
-                            <p class="text-sm text-white line-through">${task.description}</p>
-                        </div>
-                        <div class="flex items-center gap-2 mt-1">
-                            <span class="px-2 py-0.5 bg-gray-700 rounded text-xs text-gray-300">${task.botName}</span>
-                            <span class="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 rounded text-xs">Done</span>
-                        </div>
+                        <p class="text-sm text-white line-through">${task.description}</p>
+                        <span class="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 rounded text-xs">Done</span>
                     </div>
                 `).join('');
             }
-            
-            lucide.createIcons();
         }
         
         function approveTask(taskId) {
@@ -729,15 +974,14 @@
             if (task) {
                 task.status = 'approved';
                 renderTasks();
-                addActivity(`Task approved! ${task.botName} is now working on: "${task.description.substring(0, 25)}..."`);
-                
+                addActivity(`${task.botName} started working`);
                 document.getElementById(task.bot + '-status').textContent = 'WORKING';
                 document.getElementById(task.bot + '-status').className = 'px-2 py-0.5 rounded-full text-xs font-bold bg-blue-500/20 text-blue-400 border border-blue-500/40';
                 
                 setTimeout(() => {
                     task.status = 'completed';
                     renderTasks();
-                    addActivity(`${task.botName} completed: "${task.description.substring(0, 25)}..."`);
+                    addActivity(`${task.botName} completed task`);
                     document.getElementById(task.bot + '-status').textContent = 'IDLE';
                     document.getElementById(task.bot + '-status').className = 'px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40';
                 }, 5000);
@@ -747,21 +991,14 @@
         function addActivity(message) {
             const list = document.getElementById('activity-list');
             const emptyState = list.querySelector('.text-center');
-            if (emptyState) {
-                emptyState.remove();
-            }
+            if (emptyState) emptyState.remove();
             
             const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             const item = document.createElement('div');
             item.className = 'flex items-center gap-3 p-2 bg-gray-900/50 rounded-lg text-sm';
-            item.innerHTML = `
-                <span class="text-gray-500 text-xs">${time}</span>
-                <span class="text-gray-300">${message}</span>
-            `;
+            item.innerHTML = `<span class="text-gray-500 text-xs">${time}</span><span class="text-gray-300">${message}</span>`;
             list.insertBefore(item, list.firstChild);
-            
-            const count = list.children.length;
-            document.getElementById('activity-count').textContent = count;
+            document.getElementById('activity-count').textContent = list.children.length;
         }
         
         document.getElementById('gege-panel').addEventListener('click', (e) => {
