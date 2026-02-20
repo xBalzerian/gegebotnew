@@ -11,58 +11,50 @@
         * { font-family: 'Inter', sans-serif; }
         body { background: #030712; color: white; overflow-x: hidden; }
         
-        /* Aggressive Robot Styles */
+        /* Bot Card */
         .bot-card {
             position: relative;
             transition: all 0.3s ease;
         }
         .bot-card:hover {
-            transform: scale(1.03);
-            box-shadow: 0 0 40px rgba(255, 0, 0, 0.3), 0 20px 40px rgba(0, 0, 0, 0.5);
-            border-color: rgba(239, 68, 68, 0.5) !important;
+            transform: scale(1.02);
+            box-shadow: 0 0 40px rgba(239, 68, 68, 0.2), 0 20px 40px rgba(0, 0, 0, 0.5);
         }
         
-        /* Hover Info Panel - FIXED for MacBook */
-        .bot-card {
-            position: relative;
-            z-index: 1;
-            overflow: visible !important;
-        }
-        .bot-card:hover {
-            z-index: 9999;
-        }
+        /* Hover Info - Fixed Position */
         .hover-info {
             position: absolute;
-            bottom: calc(100% + 15px);
+            top: 10px;
             left: 50%;
-            transform: translateX(-50%) translateY(-10px);
-            width: 240px;
+            transform: translateX(-50%) scale(0.95);
+            width: 220px;
             background: rgba(17, 24, 39, 0.98);
-            border: 2px solid currentColor;
+            border: 2px solid;
             border-radius: 12px;
-            padding: 14px;
+            padding: 12px;
             opacity: 0;
             pointer-events: none;
-            transition: all 0.3s ease;
-            z-index: 99999;
+            transition: all 0.2s ease;
+            z-index: 100;
             backdrop-filter: blur(10px);
-            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.9), 0 0 20px rgba(239, 68, 68, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
         }
-        .hover-info::before {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            border-left: 10px solid transparent;
-            border-right: 10px solid transparent;
-            border-top: 10px solid rgba(17, 24, 39, 0.98);
-        }
-        .bot-card:hover > .hover-info,
         .bot-card:hover .hover-info {
             opacity: 1;
             pointer-events: auto;
-            transform: translateX(-50%) translateY(0);
+            transform: translateX(-50%) scale(1);
+        }
+        
+        /* Task Input Bar */
+        .task-input-bar {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, opacity 0.3s ease;
+            opacity: 0;
+        }
+        .task-input-bar.active {
+            max-height: 100px;
+            opacity: 1;
         }
         
         /* Draggable */
@@ -75,6 +67,7 @@
     </style>
 </head>
 <body class="min-h-screen p-6">
+    <!-- Header -->
     <header class="mb-6">
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
@@ -83,7 +76,7 @@
                 </div>
                 <div>
                     <h1 class="text-2xl font-bold text-white">Agent Command Center</h1>
-                    <p class="text-gray-400">5 Agents Online • Hover to see capabilities</p>
+                    <p class="text-gray-400">5 Agents Online • Hover robots to see skills</p>
                 </div>
             </div>
         </div>
@@ -103,7 +96,6 @@
                 <p class="text-xs text-gray-400 mb-3">Your Personal Assistant</p>
             </div>
             
-            <!-- Gege SVG -->
             <div class="flex justify-center py-3">
                 <div class="relative w-24 h-24">
                     <svg viewBox="0 0 100 100" class="w-full h-full">
@@ -153,10 +145,42 @@
             </div>
         </div>
 
-        <!-- WriteBot - AGGRESSIVE WRITER BOT -->
+        <!-- WriteBot -->
         <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 border-2 border-emerald-500/30 overflow-hidden">
             <div class="absolute top-3 right-3">
                 <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40" id="writebot-status">IDLE</span>
+            </div>
+            
+            <!-- Hover Info -->
+            <div class="hover-info" style="border-color: #10b981;">
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
+                        <i data-lucide="pen-tool" class="w-4 h-4 text-white"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-white text-sm">WriteBot</h4>
+                        <p class="text-xs text-emerald-400">CONTENT DESTROYER</p>
+                    </div>
+                </div>
+                
+                <p class="text-xs text-gray-300 mb-2">Crafts killer content that ranks #1</p>
+                
+                <div class="space-y-1">
+                    <div class="flex items-center gap-1 text-xs text-gray-400">
+                        <i data-lucide="zap" class="w-3 h-3 text-emerald-400"></i>
+                        SEO articles
+                    </div>
+                    
+                    <div class="flex items-center gap-1 text-xs text-gray-400">
+                        <i data-lucide="zap" class="w-3 h-3 text-emerald-400"></i>
+                        Marketing copy
+                    </div>
+                    
+                    <div class="flex items-center gap-1 text-xs text-gray-400">
+                        <i data-lucide="zap" class="w-3 h-3 text-emerald-400"></i>
+                        Product descriptions
+                    </div>
+                </div>
             </div>
             
             <div class="relative z-10">
@@ -164,21 +188,17 @@
                 <p class="text-xs text-gray-400 mb-3">Content Writer</p>
             </div>
             
-            <!-- AGGRESSIVE WriteBot SVG -->
             <div class="flex justify-center py-3">
                 <div class="relative w-28 h-28">
                     <svg viewBox="0 0 100 100" class="w-full h-full">
-                        <!-- Spiked shoulders -->
                         <polygon points="15,45 5,35 15,55" fill="#059669"/>
+                        
                         <polygon points="85,45 95,35 85,55" fill="#059669"/>
                         
-                        <!-- Angular body -->
                         <polygon points="25,40 75,40 80,75 20,75" fill="#10b981"/>
                         
-                        <!-- Chest screen -->
                         <rect x="30" y="48" width="40" height="20" fill="#064e3b"/>
                         
-                        <!-- GLOWING ANGRY EYES -->
                         <polygon points="35,52 42,54 35,56" fill="#34d399">
                             <animate attributeName="fill" values="#34d399;#ffffff;#34d399" dur="0.5s" repeatCount="indefinite"/>
                         </polygon>
@@ -187,29 +207,23 @@
                             <animate attributeName="fill" values="#34d399;#ffffff;#34d399" dur="0.5s" repeatCount="indefinite"/>
                         </polygon>
                         
-                        <!-- Weaponized pen arm -->
                         <rect x="78" y="50" width="25" height="8" rx="2" fill="#059669">
                             <animateTransform attributeName="transform" type="rotate" values="0 78 54;-25 78 54;0 78 54" dur="0.8s" repeatCount="indefinite"/>
                         </rect>
                         
-                        <!-- Sharp pen tip -->
                         <polygon points="103,50 112,54 103,58" fill="#fbbf24">
                             <animateTransform attributeName="transform" type="rotate" values="0 78 54;-25 78 54;0 78 54" dur="0.8s" repeatCount="indefinite"/>
                         </polygon>
                         
-                        <!-- Attack pages -->
                         <rect x="70" y="15" width="20" height="25" fill="white" opacity="0.9">
                             <animateTransform attributeName="transform" type="translate" values="0,0; 20,-30" dur="1.5s" repeatCount="indefinite"/>
-                            <animateTransform attributeName="transform" type="rotate" values="0 80 27; 30 80 27" dur="1.5s" repeatCount="indefinite" additive="sum"/>
                             <animate attributeName="opacity" values="1;0" dur="1.5s" repeatCount="indefinite"/>
                         </rect>
                         
-                        <!-- Shield arm -->
                         <rect x="8" y="50" width="20" height="6" rx="3" fill="#059669"/>
                         
                         <polygon points="5,45 5,65 15,60 15,50" fill="#047857"/>
                         
-                        <!-- Spiked legs -->
                         <rect x="32" y="75" width="12" height="20" fill="#059669"/>
                         
                         <rect x="56" y="75" width="12" height="20" fill="#059669"/>
@@ -221,53 +235,57 @@
                 </div>
             </div>
             
-            <!-- HOVER INFO -->
-            <div class="hover-info" style="color: #10b981;">
-                <div class="flex items-center gap-3 mb-3">
-                    <div class="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center">
-                        <i data-lucide="pen-tool" class="w-5 h-5 text-white"></i>
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-white text-lg">WriteBot</h4>
-                        <p class="text-xs text-emerald-400 font-semibold">CONTENT DESTROYER</p>
-                    </div>
-                </div>
-                
-                <p class="text-sm text-gray-300 mb-3">I dominate search rankings with killer content. My words convert browsers into buyers.</p>
-                
-                <div class="space-y-2 border-t border-gray-700 pt-3">
-                    <div class="flex items-center gap-2 text-xs">
-                        <i data-lucide="zap" class="w-4 h-4 text-emerald-400"></i>
-                        <span class="text-gray-300">SEO-optimized articles that rank #1</span>
-                    </div>
+            <!-- Task Input Bar (Under Button) -->
+            <div id="writebot-input" class="task-input-bar">
+                <div class="flex gap-2 mt-3">
+                    <input type="text" id="writebot-text" placeholder="What should I write?" 
+                           class="flex-1 px-3 py-2 bg-gray-900 border border-emerald-500/30 rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none focus:border-emerald-500">
                     
-                    <div class="flex items-center gap-2 text-xs">
-                        <i data-lucide="zap" class="w-4 h-4 text-emerald-400"></i>
-                        <span class="text-gray-300">High-converting marketing copy</span>
-                    </div>
-                    
-                    <div class="flex items-center gap-2 text-xs">
-                        <i data-lucide="zap" class="w-4 h-4 text-emerald-400"></i>
-                        <span class="text-gray-300">Killer product descriptions</span>
-                    </div>
-                    
-                    <div class="flex items-center gap-2 text-xs">
-                        <i data-lucide="zap" class="w-4 h-4 text-emerald-400"></i>
-                        <span class="text-gray-300">Viral social media content</span>
-                    </div>
+                    <button onclick="submitBotTask('writebot')" class="px-3 py-2 bg-emerald-500 hover:bg-emerald-600 rounded-lg text-white text-sm font-semibold">Go</button>
                 </div>
             </div>
             
-            <button onclick="showTaskModal('writebot')" class="w-full py-2 rounded-lg font-semibold text-white text-sm bg-emerald-500 hover:bg-emerald-600 transition-colors flex items-center justify-center gap-2">
+            <button onclick="toggleTaskInput('writebot')" class="w-full mt-3 py-2 rounded-lg font-semibold text-white text-sm bg-emerald-500 hover:bg-emerald-600 transition-colors flex items-center justify-center gap-2">
                 <i data-lucide="plus" class="w-4 h-4"></i>
                 Add Task
             </button>
         </div>
 
-        <!-- PixelBot - AGGRESSIVE ARTIST BOT -->
+        <!-- PixelBot -->
         <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 border-2 border-violet-500/30 overflow-hidden">
             <div class="absolute top-3 right-3">
                 <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-violet-500/20 text-violet-400 border border-violet-500/40" id="pixelbot-status">IDLE</span>
+            </div>
+            
+            <div class="hover-info" style="border-color: #8b5cf6;">
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="w-8 h-8 bg-violet-500 rounded-lg flex items-center justify-center">
+                        <i data-lucide="image" class="w-4 h-4 text-white"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-white text-sm">PixelBot</h4>
+                        <p class="text-xs text-violet-400">VISUAL WARRIOR</p>
+                    </div>
+                </div>
+                
+                <p class="text-xs text-gray-300 mb-2">Creates visuals that dominate</p>
+                
+                <div class="space-y-1">
+                    <div class="flex items-center gap-1 text-xs text-gray-400">
+                        <i data-lucide="zap" class="w-3 h-3 text-violet-400"></i>
+                        Hero images
+                    </div>
+                    
+                    <div class="flex items-center gap-1 text-xs text-gray-400">
+                        <i data-lucide="zap" class="w-3 h-3 text-violet-400"></i>
+                        Social graphics
+                    </div>
+                    
+                    <div class="flex items-center gap-1 text-xs text-gray-400">
+                        <i data-lucide="zap" class="w-3 h-3 text-violet-400"></i>
+                        Product shots
+                    </div>
+                </div>
             </div>
             
             <div class="relative z-10">
@@ -275,19 +293,15 @@
                 <p class="text-xs text-gray-400 mb-3">Image Generation</p>
             </div>
             
-            <!-- AGGRESSIVE PixelBot SVG -->
             <div class="flex justify-center py-3">
                 <div class="relative w-28 h-28">
                     <svg viewBox="0 0 100 100" class="w-full h-full">
-                        <!-- Spiked shoulders -->
                         <polygon points="12,42 2,30 15,50" fill="#7c3aed"/>
                         
                         <polygon points="88,42 98,30 85,50" fill="#7c3aed"/>
                         
-                        <!-- Angular armored body -->
                         <polygon points="22,38 78,38 85,78 15,78" fill="#8b5cf6"/>
                         
-                        <!-- Visor with GLOWING EYES -->
                         <rect x="28" y="48" width="44" height="16" rx="2" fill="#1e1b4b"/>
                         
                         <rect x="32" y="52" width="16" height="8" fill="#a78bfa">
@@ -298,30 +312,21 @@
                             <animate attributeName="fill" values="#a78bfa;#ffffff;#3b82f6;#a78bfa" dur="0.7s" repeatCount="indefinite"/>
                         </rect>
                         
-                        <!-- Weaponized brush arm -->
                         <rect x="80" y="48" width="28" height="10" rx="2" fill="#7c3aed">
                             <animateTransform attributeName="transform" type="rotate" values="0 80 53;-30 80 53;0 80 53" dur="0.6s" repeatCount="indefinite"/>
                         </rect>
                         
-                        <!-- Paint cannon -->
                         <rect x="106" y="45" width="8" height="16" fill="#1f2937"/>
                         
                         <ellipse cx="110" cy="53" rx="4" ry="8" fill="#ec4899">
                             <animateTransform attributeName="transform" type="rotate" values="0 80 53;-30 80 53;0 80 53" dur="0.6s" repeatCount="indefinite"/>
                         </ellipse>
                         
-                        <!-- Paint explosions -->
                         <circle cx="115" cy="70" r="5" fill="#ec4899" opacity="0">
                             <animate attributeName="opacity" values="0;1;0" dur="0.6s" repeatCount="indefinite"/>
                             <animate attributeName="cy" values="60;85" dur="0.6s" repeatCount="indefinite"/>
                         </circle>
                         
-                        <circle cx="120" cy="65" r="4" fill="#3b82f6" opacity="0">
-                            <animate attributeName="opacity" values="0;1;0" dur="0.6s" repeatCount="indefinite" begin="0.2s"/>
-                            <animate attributeName="cy" values="55;80" dur="0.6s" repeatCount="indefinite" begin="0.2s"/>
-                        </circle>
-                        
-                        <!-- Shield with palette -->
                         <rect x="5" y="50" width="20" height="6" rx="3" fill="#7c3aed"/>
                         
                         <polygon points="0,40 0,70 15,65 15,45" fill="#1f2937" stroke="#fbbf24" stroke-width="2"/>
@@ -332,7 +337,6 @@
                         
                         <circle cx="10" cy="48" r="3" fill="#10b981"/>
                         
-                        <!-- Spiked legs -->
                         <rect x="30" y="78" width="14" height="18" fill="#7c3aed"/>
                         
                         <rect x="56" y="78" width="14" height="18" fill="#7c3aed"/>
@@ -344,55 +348,56 @@
                 </div>
             </div>
             
-            <!-- HOVER INFO -->
-            <div class="hover-info" style="color: #8b5cf6;">
-                <div class="flex items-center gap-3 mb-3">
-                    <div class="w-10 h-10 bg-violet-500 rounded-lg flex items-center justify-center">
-                        <i data-lucide="image" class="w-5 h-5 text-white"></i>
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-white text-lg">PixelBot</h4>
-                        <p class="text-xs text-violet-400 font-semibold">VISUAL WARRIOR</p>
-                    </div>
-                </div>
-                
-                <p class="text-sm text-gray-300 mb-3">I create visuals that dominate. My images stop the scroll and demand attention.</p>
-                
-                <div class="space-y-2 border-t border-gray-700 pt-3">
-                    <div class="flex items-center gap-2 text-xs">
-                        <i data-lucide="zap" class="w-4 h-4 text-violet-400"></i>
-                        <span class="text-gray-300">Hero images that convert</span>
-                    </div>
+            <div id="pixelbot-input" class="task-input-bar">
+                <div class="flex gap-2 mt-3">
+                    <input type="text" id="pixelbot-text" placeholder="What image should I create?" 
+                           class="flex-1 px-3 py-2 bg-gray-900 border border-violet-500/30 rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none focus:border-violet-500">
                     
-                    <div class="flex items-center gap-2 text-xs">
-                        <i data-lucide="zap" class="w-4 h-4 text-violet-400"></i>
-                        <span class="text-gray-300">Social graphics that go viral</span>
-                    </div>
-                    
-                    <div class="flex items-center gap-2 text-xs">
-                        <i data-lucide="zap" class="w-4 h-4 text-violet-400"></i>
-                        <span class="text-gray-300">Product shots that sell</span>
-                    </div>
-                    
-                    <div class="flex items-center gap-2 text-xs">
-                        <i data-lucide="zap" class="w-4 h-4 text-violet-400"></i>
-                        <span class="text-gray-300">Custom illustrations & art</span>
-                    </div>
+                    <button onclick="submitBotTask('pixelbot')" class="px-3 py-2 bg-violet-500 hover:bg-violet-600 rounded-lg text-white text-sm font-semibold">Go</button>
                 </div>
             </div>
             
-            <button onclick="showTaskModal('pixelbot')" class="w-full py-2 rounded-lg font-semibold text-white text-sm bg-violet-500 hover:bg-violet-600 transition-colors flex items-center justify-center gap-2">
+            <button onclick="toggleTaskInput('pixelbot')" class="w-full mt-3 py-2 rounded-lg font-semibold text-white text-sm bg-violet-500 hover:bg-violet-600 transition-colors flex items-center justify-center gap-2">
                 <i data-lucide="plus" class="w-4 h-4"></i>
                 Add Task
             </button>
         </div>
 
-        <!-- [KeyBot and PressBot similar aggressive style...] -->
-        
-        <!-- KeyBot - AGGRESSIVE ANALYST BOT -->
+        <!-- KeyBot -->
         <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 border-2 border-amber-500/30 overflow-hidden">
             <div class="absolute top-3 right-3">
                 <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-amber-500/20 text-amber-400 border border-amber-500/40" id="keybot-status">IDLE</span>
+            </div>
+            
+            <div class="hover-info" style="border-color: #f59e0b;">
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="w-8 h-8 bg-amber-500 rounded-lg flex items-center justify-center">
+                        <i data-lucide="search" class="w-4 h-4 text-white"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-white text-sm">KeyBot</h4>
+                        <p class="text-xs text-amber-400">DATA HUNTER</p>
+                    </div>
+                </div>
+                
+                <p class="text-xs text-gray-300 mb-2">Hunts keywords that crush competition</p>
+                
+                <div class="space-y-1">
+                    <div class="flex items-center gap-1 text-xs text-gray-400">
+                        <i data-lucide="zap" class="w-3 h-3 text-amber-400"></i>
+                        Keyword research
+                    </div>
+                    
+                    <div class="flex items-center gap-1 text-xs text-gray-400">
+                        <i data-lucide="zap" class="w-3 h-3 text-amber-400"></i>
+                        Competitor intel
+                    </div>
+                    
+                    <div class="flex items-center gap-1 text-xs text-gray-400">
+                        <i data-lucide="zap" class="w-3 h-3 text-amber-400"></i>
+                        Trend prediction
+                    </div>
+                </div>
             </div>
             
             <div class="relative z-10">
@@ -452,52 +457,56 @@
                 </div>
             </div>
             
-            <div class="hover-info" style="color: #f59e0b;">
-                <div class="flex items-center gap-3 mb-3">
-                    <div class="w-10 h-10 bg-amber-500 rounded-lg flex items-center justify-center">
-                        <i data-lucide="search" class="w-5 h-5 text-white"></i>
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-white text-lg">KeyBot</h4>
-                        <p class="text-xs text-amber-400 font-semibold">DATA HUNTER</p>
-                    </div>
-                </div>
-                
-                <p class="text-sm text-gray-300 mb-3">I hunt down keywords that crush competition. My intel gives you the edge.</p>
-                
-                <div class="space-y-2 border-t border-gray-700 pt-3">
-                    <div class="flex items-center gap-2 text-xs">
-                        <i data-lucide="zap" class="w-4 h-4 text-amber-400"></i>
-                        <span class="text-gray-300">Deep keyword research</span>
-                    </div>
+            <div id="keybot-input" class="task-input-bar">
+                <div class="flex gap-2 mt-3">
+                    <input type="text" id="keybot-text" placeholder="What keywords to research?" 
+                           class="flex-1 px-3 py-2 bg-gray-900 border border-amber-500/30 rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none focus:border-amber-500">
                     
-                    <div class="flex items-center gap-2 text-xs">
-                        <i data-lucide="zap" class="w-4 h-4 text-amber-400"></i>
-                        <span class="text-gray-300">Competitor intelligence</span>
-                    </div>
-                    
-                    <div class="flex items-center gap-2 text-xs">
-                        <i data-lucide="zap" class="w-4 h-4 text-amber-400"></i>
-                        <span class="text-gray-300">Content cluster strategy</span>
-                    </div>
-                    
-                    <div class="flex items-center gap-2 text-xs">
-                        <i data-lucide="zap" class="w-4 h-4 text-amber-400"></i>
-                        <span class="text-gray-300">Trend prediction</span>
-                    </div>
+                    <button onclick="submitBotTask('keybot')" class="px-3 py-2 bg-amber-500 hover:bg-amber-600 rounded-lg text-white text-sm font-semibold">Go</button>
                 </div>
             </div>
             
-            <button onclick="showTaskModal('keybot')" class="w-full py-2 rounded-lg font-semibold text-white text-sm bg-amber-500 hover:bg-amber-600 transition-colors flex items-center justify-center gap-2">
+            <button onclick="toggleTaskInput('keybot')" class="w-full mt-3 py-2 rounded-lg font-semibold text-white text-sm bg-amber-500 hover:bg-amber-600 transition-colors flex items-center justify-center gap-2">
                 <i data-lucide="plus" class="w-4 h-4"></i>
                 Add Task
             </button>
         </div>
 
-        <!-- PressBot - AGGRESSIVE PUBLISHER BOT -->
+        <!-- PressBot -->
         <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 border-2 border-blue-500/30 overflow-hidden">
             <div class="absolute top-3 right-3">
                 <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-blue-500/20 text-blue-400 border border-blue-500/40" id="pressbot-status">IDLE</span>
+            </div>
+            
+            <div class="hover-info" style="border-color: #3b82f6;">
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                        <i data-lucide="rocket" class="w-4 h-4 text-white"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-white text-sm">PressBot</h4>
+                        <p class="text-xs text-blue-400">CONTENT LAUNCHER</p>
+                    </div>
+                </div>
+                
+                <p class="text-xs text-gray-300 mb-2">Launches content at rocket speed</p>
+                
+                <div class="space-y-1">
+                    <div class="flex items-center gap-1 text-xs text-gray-400">
+                        <i data-lucide="zap" class="w-3 h-3 text-blue-400"></i>
+                        Instant WP publish
+                    </div>
+                    
+                    <div class="flex items-center gap-1 text-xs text-gray-400">
+                        <i data-lucide="zap" class="w-3 h-3 text-blue-400"></i>
+                        Scheduled posts
+                    </div>
+                    
+                    <div class="flex items-center gap-1 text-xs text-gray-400">
+                        <i data-lucide="zap" class="w-3 h-3 text-blue-400"></i>
+                        Multi-site control
+                    </div>
+                </div>
             </div>
             
             <div class="relative z-10">
@@ -542,7 +551,6 @@
                         
                         <rect x="75" y="12" width="20" height="28" rx="2" fill="white" stroke="#e5e7eb" stroke-width="1">
                             <animateTransform attributeName="transform" type="translate" values="0,0; 25,-35" dur="1.2s" repeatCount="indefinite"/>
-                            <animateTransform attributeName="transform" type="rotate" values="0 85 26; 25 85 26" dur="1.2s" repeatCount="indefinite" additive="sum"/>
                             <animate attributeName="opacity" values="1;0" dur="1.2s" repeatCount="indefinite"/>
                         </rect>
                         
@@ -561,50 +569,23 @@
                 </div>
             </div>
             
-            <div class="hover-info" style="color: #3b82f6;">
-                <div class="flex items-center gap-3 mb-3">
-                    <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
-                        <i data-lucide="rocket" class="w-5 h-5 text-white"></i>
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-white text-lg">PressBot</h4>
-                        <p class="text-xs text-blue-400 font-semibold">CONTENT LAUNCHER</p>
-                    </div>
-                </div>
-                
-                <p class="text-sm text-gray-300 mb-3">I launch content at rocket speed. Your posts go live before the competition blinks.</p>
-                
-                <div class="space-y-2 border-t border-gray-700 pt-3">
-                    <div class="flex items-center gap-2 text-xs">
-                        <i data-lucide="zap" class="w-4 h-4 text-blue-400"></i>
-                        <span class="text-gray-300">Instant WP publishing</span>
-                    </div>
+            <div id="pressbot-input" class="task-input-bar">
+                <div class="flex gap-2 mt-3">
+                    <input type="text" id="pressbot-text" placeholder="What to publish?" 
+                           class="flex-1 px-3 py-2 bg-gray-900 border border-blue-500/30 rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none focus:border-blue-500">
                     
-                    <div class="flex items-center gap-2 text-xs">
-                        <i data-lucide="zap" class="w-4 h-4 text-blue-400"></i>
-                        <span class="text-gray-300">Scheduled post deployment</span>
-                    </div>
-                    
-                    <div class="flex items-center gap-2 text-xs">
-                        <i data-lucide="zap" class="w-4 h-4 text-blue-400"></i>
-                        <span class="text-gray-300">Multi-site control</span>
-                    </div>
-                    
-                    <div class="flex items-center gap-2 text-xs">
-                        <i data-lucide="zap" class="w-4 h-4 text-blue-400"></i>
-                        <span class="text-gray-300">Auto SEO optimization</span>
-                    </div>
+                    <button onclick="submitBotTask('pressbot')" class="px-3 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg text-white text-sm font-semibold">Go</button>
                 </div>
             </div>
             
-            <button onclick="showTaskModal('pressbot')" class="w-full py-2 rounded-lg font-semibold text-white text-sm bg-blue-500 hover:bg-blue-600 transition-colors flex items-center justify-center gap-2">
+            <button onclick="toggleTaskInput('pressbot')" class="w-full mt-3 py-2 rounded-lg font-semibold text-white text-sm bg-blue-500 hover:bg-blue-600 transition-colors flex items-center justify-center gap-2">
                 <i data-lucide="plus" class="w-4 h-4"></i>
                 Add Task
             </button>
         </div>
     </div>
 
-    <!-- [Activity Log, Gege Panel, Task Modal, JavaScript same as before] -->
+    <!-- Activity Log -->
     <div id="activity-log" class="draggable bg-gray-800/90 backdrop-blur-md rounded-xl border border-gray-700/50 shadow-2xl" style="bottom: 20px; right: 20px; width: 380px; max-height: 400px;">
         <div class="drag-handle flex items-center justify-between p-3 border-b border-gray-700/50 cursor-move bg-gray-700/30 rounded-t-xl">
             <div class="flex items-center gap-2">
@@ -627,6 +608,7 @@
         </div>
     </div>
 
+    <!-- Gege Panel -->
     <div id="gege-panel" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center">
         <div class="bg-gray-800 rounded-2xl border border-violet-500/30 w-full max-w-4xl max-h-[80vh] overflow-hidden shadow-2xl m-4">
             <div class="p-4 border-b border-gray-700/50 flex items-center justify-between bg-gradient-to-r from-violet-500/10 to-pink-500/10">
@@ -646,6 +628,7 @@
                 <div class="flex gap-2">
                     <input type="text" id="new-task-input" placeholder="Describe what you need..." 
                            class="flex-1 px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-violet-500">
+                    
                     <button onclick="addTask()" class="px-4 py-2 bg-violet-500 hover:bg-violet-600 rounded-lg font-semibold text-white flex items-center gap-2">
                         <i data-lucide="plus" class="w-4 h-4"></i>
                         Add
@@ -656,7 +639,7 @@
             <div class="p-4 overflow-y-auto" style="max-height: 50vh;">
                 <div class="mb-6">
                     <h3 class="text-sm font-semibold text-amber-400 mb-3">
-                        Pending Approval <span class="px-2 py-0.5 bg-amber-500/20 rounded text-xs" id="pending-count">0</span>
+                        Pending <span class="px-2 py-0.5 bg-amber-500/20 rounded text-xs" id="pending-count">0</span>
                     </h3>
                     <div id="pending-tasks" class="space-y-2"><p class="text-sm text-gray-500 italic">No pending tasks</p></div>
                 </div>
@@ -678,23 +661,10 @@
         </div>
     </div>
 
-    <div id="task-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center">
-        <div class="bg-gray-800 rounded-2xl border border-gray-700 w-full max-w-md m-4 p-6">
-            <h3 class="text-xl font-bold text-white mb-4" id="modal-title">Add Task</h3>
-            <textarea id="task-description" rows="3" placeholder="Describe the task..." 
-                      class="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 resize-none focus:outline-none focus:border-violet-500 mb-4"></textarea>
-            <div class="flex gap-2">
-                <button onclick="closeTaskModal()" class="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-white">Cancel</button>
-                <button onclick="submitTask()" class="flex-1 px-4 py-2 bg-violet-500 hover:bg-violet-600 rounded-lg text-white font-semibold">Add to Gege</button>
-            </div>
-        </div>
-    </div>
-
     <script>
         lucide.createIcons();
         
         let tasks = [];
-        let currentBot = null;
         let taskIdCounter = 1;
         
         // Draggable
@@ -759,29 +729,32 @@
             document.getElementById('gege-panel').classList.add('hidden');
         }
         
-        function showTaskModal(bot) {
-            currentBot = bot;
-            const botNames = {
-                'writebot': 'WriteBot - Content Writing',
-                'pixelbot': 'PixelBot - Image Generation',
-                'keybot': 'KeyBot - Keyword Research',
-                'pressbot': 'PressBot - WordPress Publishing'
-            };
-            document.getElementById('modal-title').textContent = 'Add Task for ' + botNames[bot];
-            document.getElementById('task-modal').classList.remove('hidden');
+        // Toggle task input bar
+        function toggleTaskInput(bot) {
+            const inputBar = document.getElementById(bot + '-input');
+            const isActive = inputBar.classList.contains('active');
+            
+            // Close all other inputs
+            document.querySelectorAll('.task-input-bar').forEach(bar => {
+                bar.classList.remove('active');
+            });
+            
+            // Toggle current
+            if (!isActive) {
+                inputBar.classList.add('active');
+                document.getElementById(bot + '-text').focus();
+            }
         }
         
-        function closeTaskModal() {
-            document.getElementById('task-modal').classList.add('hidden');
-            document.getElementById('task-description').value = '';
-            currentBot = null;
-        }
-        
-        function submitTask() {
-            const description = document.getElementById('task-description').value;
+        // Submit task from bot input
+        function submitBotTask(bot) {
+            const input = document.getElementById(bot + '-text');
+            const description = input.value;
+            
             if (description.trim()) {
-                addTaskToGege(description, currentBot);
-                closeTaskModal();
+                addTaskToGege(description, bot);
+                input.value = '';
+                document.getElementById(bot + '-input').classList.remove('active');
             }
         }
         
@@ -799,9 +772,9 @@
             const lowerDesc = description.toLowerCase();
             
             if (!assignedBot) {
-                if (lowerDesc.includes('write') || lowerDesc.includes('blog') || lowerDesc.includes('article') || lowerDesc.includes('content')) {
+                if (lowerDesc.includes('write') || lowerDesc.includes('blog') || lowerDesc.includes('article')) {
                     assignedBot = 'writebot';
-                } else if (lowerDesc.includes('image') || lowerDesc.includes('picture') || lowerDesc.includes('photo') || lowerDesc.includes('generate')) {
+                } else if (lowerDesc.includes('image') || lowerDesc.includes('picture') || lowerDesc.includes('photo')) {
                     assignedBot = 'pixelbot';
                 } else if (lowerDesc.includes('keyword') || lowerDesc.includes('seo') || lowerDesc.includes('search')) {
                     assignedBot = 'keybot';
@@ -848,7 +821,7 @@
                 pendingContainer.innerHTML = '<p class="text-sm text-gray-500 italic">No pending tasks</p>';
             } else {
                 pendingContainer.innerHTML = pending.map(task => `
-                    <div class="task-card bg-gray-900/50 border border-amber-500/30 rounded-lg p-3">
+                    <div class="bg-gray-900/50 border border-amber-500/30 rounded-lg p-3">
                         <div class="flex items-start justify-between">
                             <div class="flex-1">
                                 <p class="text-sm text-white mb-1">${task.description}</p>
@@ -865,7 +838,7 @@
                 progressContainer.innerHTML = '<p class="text-sm text-gray-500 italic">No tasks in progress</p>';
             } else {
                 progressContainer.innerHTML = inProgress.map(task => `
-                    <div class="task-card bg-gray-900/50 border border-blue-500/30 rounded-lg p-3">
+                    <div class="bg-gray-900/50 border border-blue-500/30 rounded-lg p-3">
                         <p class="text-sm text-white">${task.description}</p>
                         <span class="px-2 py-0.5 bg-blue-500/20 text-blue-400 rounded text-xs">${task.botName} working...</span>
                     </div>
@@ -877,7 +850,7 @@
                 completedContainer.innerHTML = '<p class="text-sm text-gray-500 italic">No completed tasks</p>';
             } else {
                 completedContainer.innerHTML = completed.map(task => `
-                    <div class="task-card bg-gray-900/50 border border-emerald-500/30 rounded-lg p-3 opacity-60">
+                    <div class="bg-gray-900/50 border border-emerald-500/30 rounded-lg p-3 opacity-60">
                         <p class="text-sm text-white line-through">${task.description}</p>
                         <span class="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 rounded text-xs">Done</span>
                     </div>
@@ -917,16 +890,23 @@
             document.getElementById('activity-count').textContent = list.children.length;
         }
         
-        document.getElementById('gege-panel').addEventListener('click', (e) => {
-            if (e.target === e.currentTarget) closeGegePanel();
+        // Enter key on inputs
+        document.querySelectorAll('input[id$="-text"]').forEach(input => {
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    const bot = input.id.replace('-text', '');
+                    submitBotTask(bot);
+                }
+            });
         });
-        document.getElementById('task-modal').addEventListener('click', (e) => {
-            if (e.target === e.currentTarget) closeTaskModal();
-        });
+        
         document.getElementById('new-task-input').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') addTask();
+        });
+        
+        document.getElementById('gege-panel').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closeGegePanel();
         });
     </script>
 </body>
 </html>
-<!-- Deployed: Fri Feb 20 09:34:05 AM CST 2026 -->
