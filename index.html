@@ -22,41 +22,41 @@
             border-color: rgba(239, 68, 68, 0.5) !important;
         }
         
-        /* Hover Info Panel - FIXED */
+        /* Hover Info Panel - FIXED for MacBook */
         .bot-card {
             position: relative;
             z-index: 1;
+            overflow: visible !important;
         }
         .bot-card:hover {
             z-index: 9999;
         }
         .hover-info {
             position: absolute;
-            top: 100%;
+            bottom: calc(100% + 15px);
             left: 50%;
-            transform: translateX(-50%) translateY(10px);
-            width: 260px;
+            transform: translateX(-50%) translateY(-10px);
+            width: 240px;
             background: rgba(17, 24, 39, 0.98);
             border: 2px solid currentColor;
             border-radius: 12px;
-            padding: 16px;
+            padding: 14px;
             opacity: 0;
             pointer-events: none;
             transition: all 0.3s ease;
             z-index: 99999;
             backdrop-filter: blur(10px);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 30px rgba(239, 68, 68, 0.3);
-            margin-top: 15px;
+            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.9), 0 0 20px rgba(239, 68, 68, 0.3);
         }
         .hover-info::before {
             content: '';
             position: absolute;
-            top: -10px;
+            bottom: -10px;
             left: 50%;
             transform: translateX(-50%);
             border-left: 10px solid transparent;
             border-right: 10px solid transparent;
-            border-bottom: 10px solid rgba(17, 24, 39, 0.98);
+            border-top: 10px solid rgba(17, 24, 39, 0.98);
         }
         .bot-card:hover > .hover-info,
         .bot-card:hover .hover-info {
