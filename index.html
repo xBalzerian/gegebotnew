@@ -3,29 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agent Command Center 2.0 - With Gege</title>
+    <title>Agent Command Center - With Results Panel</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
         * { font-family: 'Inter', sans-serif; }
         body { background: #030712; color: white; overflow-x: hidden; }
+        
+        /* Animations */
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
         @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 20px rgba(139, 92, 246, 0.3); } 50% { box-shadow: 0 0 40px rgba(139, 92, 246, 0.6); } }
         .animate-float { animation: float 3s ease-in-out infinite; }
         .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+        
+        /* Bot Card */
+        .bot-card { position: relative; transition: all 0.3s ease; }
+        .bot-card:hover { transform: scale(1.02); box-shadow: 0 0 30px rgba(139, 92, 246, 0.2); }
+        
+        /* Hover Info */
+        .hover-info {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%) scale(0.95);
+            width: 220px;
+            background: rgba(17, 24, 39, 0.98);
+            border: 2px solid;
+            border-radius: 12px;
+            padding: 12px;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.2s ease;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+        }
+        .bot-card:hover .hover-info { opacity: 1; pointer-events: auto; transform: translateX(-50%) scale(1); }
+        
+        /* Task Input Bar */
+        .task-input-bar {
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            opacity: 0;
+            margin-top: 0;
+        }
+        .task-input-bar.active { max-height: 60px; opacity: 1; margin-top: 12px; }
+        
+        /* Draggable */
         .draggable { position: fixed; cursor: move; user-select: none; z-index: 50; }
         .draggable.dragging { opacity: 0.8; z-index: 100; }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        
+        /* Results Panel */
+        .results-panel {
+            background: linear-gradient(135deg, rgba(17, 24, 39, 0.95), rgba(31, 41, 55, 0.95));
+            border: 1px solid rgba(75, 85, 99, 0.5);
+            backdrop-filter: blur(10px);
+        }
+        
+        /* Result Item */
+        .result-item {
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #1f2937; }
         ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 3px; }
-        .task-card { transition: all 0.2s ease; }
-        .task-card:hover { transform: translateX(4px); }
-        .bot-card:hover { box-shadow: 0 0 30px rgba(139, 92, 246, 0.2); }
-        .gege-avatar { background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 50%, #3b82f6 100%); }
     </style>
 </head>
 <body class="min-h-screen p-6">
+    <!-- Header -->
     <header class="mb-6">
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
@@ -34,7 +86,7 @@
                 </div>
                 <div>
                     <h1 class="text-2xl font-bold text-white">Agent Command Center</h1>
-                    <p class="text-gray-400">5 Agents Online • Task Approval System Active</p>
+                    <p class="text-gray-400">5 Agents Online • Results Panel Active</p>
                 </div>
             </div>
             <div class="flex items-center gap-3">
@@ -46,34 +98,29 @@
         </div>
     </header>
 
-    <!-- 5 Bot Grid -->
+    <!-- Bot Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
         
         <!-- Gege Bot -->
-        <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 border border-violet-500/30 cursor-pointer overflow-hidden group" onclick="openGegePanel()">
-            <div class="absolute inset-0 bg-gradient-to-br from-violet-500/10 via-pink-500/10 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 border border-violet-500/30 cursor-pointer overflow-hidden" onclick="openGegePanel()">
             <div class="absolute top-3 right-3">
                 <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-violet-500/20 text-violet-400 border border-violet-500/40 animate-pulse">GEGE</span>
             </div>
+            
             <div class="relative z-10">
                 <h3 class="text-lg font-bold text-white mb-0.5">Gege</h3>
                 <p class="text-xs text-gray-400 mb-3">Your Personal Assistant</p>
             </div>
+            
             <div class="flex justify-center py-3">
                 <div class="relative w-16 h-16 flex items-center justify-center">
-                    <div class="absolute inset-0 gege-avatar rounded-full blur-lg opacity-50 animate-pulse"></div>
-                    <div class="relative z-10 w-14 h-14 gege-avatar rounded-2xl flex items-center justify-center shadow-lg animate-float">
+                    <div class="absolute inset-0 bg-gradient-to-br from-violet-500 via-pink-500 to-blue-500 rounded-full blur-lg opacity-50 animate-pulse"></div>
+                    <div class="relative z-10 w-14 h-14 bg-gradient-to-br from-violet-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg animate-float">
                         <i data-lucide="sparkles" class="w-7 h-7 text-white"></i>
-                    </div>
-                    <div class="absolute inset-0 animate-spin" style="animation-duration: 8s;">
-                        <div class="absolute top-0 left-1/2 w-2 h-2 bg-violet-400 rounded-full -translate-x-1/2"></div>
-                    </div>
-                    <div class="absolute inset-0 animate-spin" style="animation-duration: 12s; animation-direction: reverse;">
-                        <div class="absolute bottom-0 left-1/2 w-1.5 h-1.5 bg-pink-400 rounded-full -translate-x-1/2"></div>
                     </div>
                 </div>
             </div>
-            <p class="text-xs text-center text-violet-400 mb-3">"Click to view your tasks"</p>
+            
             <div class="flex justify-center">
                 <div class="px-3 py-1.5 bg-violet-500/20 rounded-lg border border-violet-500/30">
                     <span class="text-lg font-bold text-violet-400" id="gege-task-count">0</span>
@@ -83,139 +130,237 @@
         </div>
 
         <!-- WriteBot -->
-        <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 border border-gray-700/50 cursor-pointer overflow-hidden group">
+        <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 border border-emerald-500/30 overflow-hidden">
             <div class="absolute top-3 right-3">
                 <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40" id="writebot-status">IDLE</span>
             </div>
+            
+            <!-- Hover Info -->
+            <div class="hover-info" style="border-color: #10b981;">
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
+                        <i data-lucide="pen-tool" class="w-4 h-4 text-white"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-white text-sm">WriteBot</h4>
+                        <p class="text-xs text-emerald-400">CONTENT DESTROYER</p>
+                    </div>
+                </div>
+                
+                <p class="text-xs text-gray-300 mb-2">Crafts killer content that ranks #1</p>
+                
+                <div class="space-y-1">
+                    <div class="flex items-center gap-1 text-xs text-gray-400"><i data-lucide="zap" class="w-3 h-3 text-emerald-400"></i>SEO articles</div>
+                    <div class="flex items-center gap-1 text-xs text-gray-400"><i data-lucide="zap" class="w-3 h-3 text-emerald-400"></i>Marketing copy</div>
+                    <div class="flex items-center gap-1 text-xs text-gray-400"><i data-lucide="zap" class="w-3 h-3 text-emerald-400"></i>Product descriptions</div>
+                </div>
+            </div>
+            
             <div class="relative z-10">
                 <h3 class="text-lg font-bold text-white mb-0.5">WriteBot</h3>
                 <p class="text-xs text-gray-400 mb-3">Content Writer</p>
             </div>
+            
             <div class="flex justify-center py-3">
-                <div class="relative w-16 h-16 flex items-center justify-center">
-                    <div class="absolute inset-0 bg-emerald-500/20 rounded-full blur-xl"></div>
-                    <div class="relative z-10 w-14 h-14 bg-emerald-500 rounded-2xl flex items-center justify-center shadow-lg animate-float">
-                        <i data-lucide="pen-tool" class="w-7 h-7 text-white"></i>
-                    </div>
+                <div class="w-16 h-16 bg-emerald-500 rounded-2xl flex items-center justify-center shadow-lg animate-float">
+                    <i data-lucide="pen-tool" class="w-8 h-8 text-white"></i>
                 </div>
             </div>
-            <div class="grid grid-cols-2 gap-2 mb-3">
-                <div class="p-2 bg-gray-900/50 rounded-lg text-center">
-                    <p class="text-lg font-bold text-emerald-400">247</p>
-                    <p class="text-[10px] text-gray-500 uppercase">Articles</p>
-                </div>
-                <div class="p-2 bg-gray-900/50 rounded-lg text-center">
-                    <p class="text-lg font-bold text-emerald-400">98%</p>
-                    <p class="text-[10px] text-gray-500 uppercase">SEO</p>
-                </div>
-            </div>
-            <button onclick="showTaskModal('writebot')" class="w-full py-2 rounded-lg font-semibold text-white text-sm bg-emerald-500 hover:bg-emerald-600 transition-colors flex items-center justify-center gap-2">
+            
+            <button onclick="toggleTaskInput('writebot')" class="w-full py-2.5 rounded-lg font-semibold text-white text-sm bg-emerald-500 hover:bg-emerald-600 transition-colors flex items-center justify-center gap-2">
                 <i data-lucide="plus" class="w-4 h-4"></i>
                 Add Writing Task
             </button>
+            
+            <div id="writebot-input" class="task-input-bar">
+                <div class="flex gap-2">
+                    <input type="text" id="writebot-text" placeholder="What should I write?" 
+                           class="flex-1 px-3 py-2 bg-gray-900 border border-emerald-500/30 rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none focus:border-emerald-500">
+                    <button onclick="submitBotTask('writebot')" class="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 rounded-lg text-white text-sm font-semibold">Go</button>
+                </div>
+            </div>
         </div>
 
         <!-- PixelBot -->
-        <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 border border-gray-700/50 cursor-pointer overflow-hidden group">
+        <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 border border-violet-500/30 overflow-hidden">
             <div class="absolute top-3 right-3">
                 <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-violet-500/20 text-violet-400 border border-violet-500/40" id="pixelbot-status">IDLE</span>
             </div>
+            
+            <div class="hover-info" style="border-color: #8b5cf6;">
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="w-8 h-8 bg-violet-500 rounded-lg flex items-center justify-center">
+                        <i data-lucide="image" class="w-4 h-4 text-white"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-white text-sm">PixelBot</h4>
+                        <p class="text-xs text-violet-400">VISUAL WARRIOR</p>
+                    </div>
+                </div>
+                
+                <p class="text-xs text-gray-300 mb-2">Creates visuals that dominate</p>
+                
+                <div class="space-y-1">
+                    <div class="flex items-center gap-1 text-xs text-gray-400"><i data-lucide="zap" class="w-3 h-3 text-violet-400"></i>Hero images</div>
+                    <div class="flex items-center gap-1 text-xs text-gray-400"><i data-lucide="zap" class="w-3 h-3 text-violet-400"></i>Social graphics</div>
+                    <div class="flex items-center gap-1 text-xs text-gray-400"><i data-lucide="zap" class="w-3 h-3 text-violet-400"></i>Product shots</div>
+                </div>
+            </div>
+            
             <div class="relative z-10">
                 <h3 class="text-lg font-bold text-white mb-0.5">PixelBot</h3>
                 <p class="text-xs text-gray-400 mb-3">Image Generation</p>
             </div>
+            
             <div class="flex justify-center py-3">
-                <div class="relative w-16 h-16 flex items-center justify-center">
-                    <div class="absolute inset-0 bg-violet-500/20 rounded-full blur-xl"></div>
-                    <div class="relative z-10 w-14 h-14 bg-violet-500 rounded-2xl flex items-center justify-center shadow-lg animate-float" style="animation-delay: 0.5s;">
-                        <i data-lucide="image" class="w-7 h-7 text-white"></i>
-                    </div>
+                <div class="w-16 h-16 bg-violet-500 rounded-2xl flex items-center justify-center shadow-lg animate-float">
+                    <i data-lucide="image" class="w-8 h-8 text-white"></i>
                 </div>
             </div>
-            <div class="grid grid-cols-2 gap-2 mb-3">
-                <div class="p-2 bg-gray-900/50 rounded-lg text-center">
-                    <p class="text-lg font-bold text-violet-400">1.2k</p>
-                    <p class="text-[10px] text-gray-500 uppercase">Images</p>
-                </div>
-                <div class="p-2 bg-gray-900/50 rounded-lg text-center">
-                    <p class="text-lg font-bold text-violet-400">4s</p>
-                    <p class="text-[10px] text-gray-500 uppercase">Avg</p>
-                </div>
-            </div>
-            <button onclick="showTaskModal('pixelbot')" class="w-full py-2 rounded-lg font-semibold text-white text-sm bg-violet-500 hover:bg-violet-600 transition-colors flex items-center justify-center gap-2">
+            
+            <button onclick="toggleTaskInput('pixelbot')" class="w-full py-2.5 rounded-lg font-semibold text-white text-sm bg-violet-500 hover:bg-violet-600 transition-colors flex items-center justify-center gap-2">
                 <i data-lucide="plus" class="w-4 h-4"></i>
                 Add Image Task
             </button>
+            
+            <div id="pixelbot-input" class="task-input-bar">
+                <div class="flex gap-2">
+                    <input type="text" id="pixelbot-text" placeholder="What image should I create?" 
+                           class="flex-1 px-3 py-2 bg-gray-900 border border-violet-500/30 rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none focus:border-violet-500">
+                    <button onclick="submitBotTask('pixelbot')" class="px-4 py-2 bg-violet-500 hover:bg-violet-600 rounded-lg text-white text-sm font-semibold">Go</button>
+                </div>
+            </div>
         </div>
 
         <!-- KeyBot -->
-        <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 border border-gray-700/50 cursor-pointer overflow-hidden group">
+        <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 border border-amber-500/30 overflow-hidden">
             <div class="absolute top-3 right-3">
                 <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-amber-500/20 text-amber-400 border border-amber-500/40" id="keybot-status">IDLE</span>
             </div>
+            
+            <div class="hover-info" style="border-color: #f59e0b;">
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="w-8 h-8 bg-amber-500 rounded-lg flex items-center justify-center">
+                        <i data-lucide="search" class="w-4 h-4 text-white"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-white text-sm">KeyBot</h4>
+                        <p class="text-xs text-amber-400">DATA HUNTER</p>
+                    </div>
+                </div>
+                
+                <p class="text-xs text-gray-300 mb-2">Hunts keywords that crush competition</p>
+                
+                <div class="space-y-1">
+                    <div class="flex items-center gap-1 text-xs text-gray-400"><i data-lucide="zap" class="w-3 h-3 text-amber-400"></i>Keyword research</div>
+                    <div class="flex items-center gap-1 text-xs text-gray-400"><i data-lucide="zap" class="w-3 h-3 text-amber-400"></i>Competitor intel</div>
+                    <div class="flex items-center gap-1 text-xs text-gray-400"><i data-lucide="zap" class="w-3 h-3 text-amber-400"></i>Trend prediction</div>
+                </div>
+            </div>
+            
             <div class="relative z-10">
                 <h3 class="text-lg font-bold text-white mb-0.5">KeyBot</h3>
                 <p class="text-xs text-gray-400 mb-3">Keyword Mapper</p>
             </div>
+            
             <div class="flex justify-center py-3">
-                <div class="relative w-16 h-16 flex items-center justify-center">
-                    <div class="absolute inset-0 bg-amber-500/20 rounded-full blur-xl"></div>
-                    <div class="relative z-10 w-14 h-14 bg-amber-500 rounded-2xl flex items-center justify-center shadow-lg animate-float" style="animation-delay: 1s;">
-                        <i data-lucide="search" class="w-7 h-7 text-white"></i>
-                    </div>
+                <div class="w-16 h-16 bg-amber-500 rounded-2xl flex items-center justify-center shadow-lg animate-float">
+                    <i data-lucide="search" class="w-8 h-8 text-white"></i>
                 </div>
             </div>
-            <div class="grid grid-cols-2 gap-2 mb-3">
-                <div class="p-2 bg-gray-900/50 rounded-lg text-center">
-                    <p class="text-lg font-bold text-amber-400">8.5k</p>
-                    <p class="text-[10px] text-gray-500 uppercase">Keywords</p>
-                </div>
-                <div class="p-2 bg-gray-900/50 rounded-lg text-center">
-                    <p class="text-lg font-bold text-amber-400">92%</p>
-                    <p class="text-[10px] text-gray-500 uppercase">Accuracy</p>
-                </div>
-            </div>
-            <button onclick="showTaskModal('keybot')" class="w-full py-2 rounded-lg font-semibold text-white text-sm bg-amber-500 hover:bg-amber-600 transition-colors flex items-center justify-center gap-2">
+            
+            <button onclick="toggleTaskInput('keybot')" class="w-full py-2.5 rounded-lg font-semibold text-white text-sm bg-amber-500 hover:bg-amber-600 transition-colors flex items-center justify-center gap-2">
                 <i data-lucide="plus" class="w-4 h-4"></i>
                 Add SEO Task
             </button>
+            
+            <div id="keybot-input" class="task-input-bar">
+                <div class="flex gap-2">
+                    <input type="text" id="keybot-text" placeholder="What keywords to research?" 
+                           class="flex-1 px-3 py-2 bg-gray-900 border border-amber-500/30 rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none focus:border-amber-500">
+                    <button onclick="submitBotTask('keybot')" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 rounded-lg text-white text-sm font-semibold">Go</button>
+                </div>
+            </div>
         </div>
 
         <!-- PressBot -->
-        <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 border border-gray-700/50 cursor-pointer overflow-hidden group">
+        <div class="bot-card relative bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 border border-blue-500/30 overflow-hidden">
             <div class="absolute top-3 right-3">
                 <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-blue-500/20 text-blue-400 border border-blue-500/40" id="pressbot-status">IDLE</span>
             </div>
+            
+            <div class="hover-info" style="border-color: #3b82f6;">
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                        <i data-lucide="rocket" class="w-4 h-4 text-white"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-white text-sm">PressBot</h4>
+                        <p class="text-xs text-blue-400">CONTENT LAUNCHER</p>
+                    </div>
+                </div>
+                
+                <p class="text-xs text-gray-300 mb-2">Launches content at rocket speed</p>
+                
+                <div class="space-y-1">
+                    <div class="flex items-center gap-1 text-xs text-gray-400"><i data-lucide="zap" class="w-3 h-3 text-blue-400"></i>Instant WP publish</div>
+                    <div class="flex items-center gap-1 text-xs text-gray-400"><i data-lucide="zap" class="w-3 h-3 text-blue-400"></i>Scheduled posts</div>
+                    <div class="flex items-center gap-1 text-xs text-gray-400"><i data-lucide="zap" class="w-3 h-3 text-blue-400"></i>Multi-site control</div>
+                </div>
+            </div>
+            
             <div class="relative z-10">
                 <h3 class="text-lg font-bold text-white mb-0.5">PressBot</h3>
                 <p class="text-xs text-gray-400 mb-3">WordPress Publisher</p>
             </div>
+            
             <div class="flex justify-center py-3">
-                <div class="relative w-16 h-16 flex items-center justify-center">
-                    <div class="absolute inset-0 bg-blue-500/20 rounded-full blur-xl"></div>
-                    <div class="relative z-10 w-14 h-14 bg-blue-500 rounded-2xl flex items-center justify-center shadow-lg animate-float" style="animation-delay: 1.5s;">
-                        <i data-lucide="rocket" class="w-7 h-7 text-white"></i>
-                    </div>
+                <div class="w-16 h-16 bg-blue-500 rounded-2xl flex items-center justify-center shadow-lg animate-float">
+                    <i data-lucide="rocket" class="w-8 h-8 text-white"></i>
                 </div>
             </div>
-            <div class="grid grid-cols-2 gap-2 mb-3">
-                <div class="p-2 bg-gray-900/50 rounded-lg text-center">
-                    <p class="text-lg font-bold text-blue-400">432</p>
-                    <p class="text-[10px] text-gray-500 uppercase">Posts</p>
-                </div>
-                <div class="p-2 bg-gray-900/50 rounded-lg text-center">
-                    <p class="text-lg font-bold text-blue-400">12</p>
-                    <p class="text-[10px] text-gray-500 uppercase">Sites</p>
-                </div>
-            </div>
-            <button onclick="showTaskModal('pressbot')" class="w-full py-2 rounded-lg font-semibold text-white text-sm bg-blue-500 hover:bg-blue-600 transition-colors flex items-center justify-center gap-2">
+            
+            <button onclick="toggleTaskInput('pressbot')" class="w-full py-2.5 rounded-lg font-semibold text-white text-sm bg-blue-500 hover:bg-blue-600 transition-colors flex items-center justify-center gap-2">
                 <i data-lucide="plus" class="w-4 h-4"></i>
                 Add Publish Task
             </button>
+            
+            <div id="pressbot-input" class="task-input-bar">
+                <div class="flex gap-2">
+                    <input type="text" id="pressbot-text" placeholder="What to publish?" 
+                           class="flex-1 px-3 py-2 bg-gray-900 border border-blue-500/30 rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none focus:border-blue-500">
+                    <button onclick="submitBotTask('pressbot')" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg text-white text-sm font-semibold">Go</button>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Draggable Activity Log -->
+    <!-- RESULTS PANEL -->
+    <div class="results-panel rounded-2xl p-6 mb-6">
+        <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-emerald-500 to-blue-500 rounded-xl flex items-center justify-center">
+                    <i data-lucide="file-output" class="w-5 h-5 text-white"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold text-white">Results Panel</h2>
+                    <p class="text-sm text-gray-400">Completed task outputs appear here</p>
+                </div>
+            </div>
+            
+            <span class="px-3 py-1 bg-violet-500/20 text-violet-400 rounded-full text-sm font-medium" id="results-count">0 results</span>
+        </div>
+        
+        <div id="results-container" class="space-y-4 max-h-96 overflow-y-auto">
+            <div class="text-center py-12 text-gray-500">
+                <i data-lucide="inbox" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>
+                <p class="text-lg">No results yet</p>
+                <p class="text-sm mt-1">Approve tasks to see outputs here</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Activity Log (Draggable) -->
     <div id="activity-log" class="draggable bg-gray-800/90 backdrop-blur-md rounded-xl border border-gray-700/50 shadow-2xl" style="bottom: 20px; right: 20px; width: 380px; max-height: 400px;">
         <div class="drag-handle flex items-center justify-between p-3 border-b border-gray-700/50 cursor-move bg-gray-700/30 rounded-t-xl">
             <div class="flex items-center gap-2">
@@ -224,14 +369,11 @@
                 <span class="px-2 py-0.5 bg-violet-500/20 text-violet-400 rounded text-xs" id="activity-count">0</span>
             </div>
             <div class="flex items-center gap-1">
-                <button onclick="minimizeLog()" class="p-1 hover:bg-gray-600 rounded">
-                    <i data-lucide="minus" class="w-4 h-4 text-gray-400"></i>
-                </button>
-                <button onclick="toggleLog()" class="p-1 hover:bg-gray-600 rounded">
-                    <i data-lucide="x" class="w-4 h-4 text-gray-400"></i>
-                </button>
+                <button onclick="minimizeLog()" class="p-1 hover:bg-gray-600 rounded"><i data-lucide="minus" class="w-4 h-4 text-gray-400"></i></button>
+                <button onclick="toggleLog()" class="p-1 hover:bg-gray-600 rounded"><i data-lucide="x" class="w-4 h-4 text-gray-400"></i></button>
             </div>
         </div>
+        
         <div id="log-content" class="p-3 overflow-y-auto" style="max-height: 320px;">
             <div id="activity-list" class="space-y-2">
                 <div class="text-center py-8 text-gray-500">
@@ -247,80 +389,49 @@
         <div class="bg-gray-800 rounded-2xl border border-violet-500/30 w-full max-w-4xl max-h-[80vh] overflow-hidden shadow-2xl m-4">
             <div class="p-4 border-b border-gray-700/50 flex items-center justify-between bg-gradient-to-r from-violet-500/10 to-pink-500/10">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 gege-avatar rounded-xl flex items-center justify-center">
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #8b5cf6, #ec4899)">
                         <i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
                     </div>
                     <div>
                         <h2 class="text-xl font-bold text-white">Gege's Task Board</h2>
-                        <p class="text-sm text-gray-400">Manage and approve tasks for your agents</p>
+                        <p class="text-sm text-gray-400">Manage and approve tasks</p>
                     </div>
                 </div>
-                <button onclick="closeGegePanel()" class="p-2 hover:bg-gray-700 rounded-lg">
-                    <i data-lucide="x" class="w-5 h-5 text-gray-400"></i>
-                </button>
+                <button onclick="closeGegePanel()" class="p-2 hover:bg-gray-700 rounded-lg"><i data-lucide="x" class="w-5 h-5 text-gray-400"></i></button>
             </div>
             
             <div class="p-4 border-b border-gray-700/50">
                 <div class="flex gap-2">
-                    <input type="text" id="new-task-input" placeholder="Describe what you need... (e.g., 'Write a blog post about AI')" 
+                    <input type="text" id="new-task-input" placeholder="Describe what you need..." 
                            class="flex-1 px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-violet-500">
                     <button onclick="addTask()" class="px-4 py-2 bg-violet-500 hover:bg-violet-600 rounded-lg font-semibold text-white flex items-center gap-2">
                         <i data-lucide="plus" class="w-4 h-4"></i>
-                        Add Task
+                        Add
                     </button>
                 </div>
-                <p class="text-xs text-gray-500 mt-2">
-                    <i data-lucide="info" class="w-3 h-3 inline mr-1"></i>
-                    Gege will automatically categorize tasks. You approve before agents start working.
-                </p>
             </div>
             
             <div class="p-4 overflow-y-auto" style="max-height: 50vh;">
                 <div class="mb-6">
-                    <h3 class="text-sm font-semibold text-amber-400 mb-3 flex items-center gap-2">
-                        <i data-lucide="clock" class="w-4 h-4"></i>
-                        Pending Approval
-                        <span class="px-2 py-0.5 bg-amber-500/20 rounded text-xs" id="pending-count">0</span>
+                    <h3 class="text-sm font-semibold text-amber-400 mb-3">
+                        Pending <span class="px-2 py-0.5 bg-amber-500/20 rounded text-xs" id="pending-count">0</span>
                     </h3>
-                    <div id="pending-tasks" class="space-y-2">
-                        <p class="text-sm text-gray-500 italic">No pending tasks</p>
-                    </div>
+                    <div id="pending-tasks" class="space-y-2"><p class="text-sm text-gray-500 italic">No pending tasks</p></div>
                 </div>
                 
                 <div class="mb-6">
-                    <h3 class="text-sm font-semibold text-blue-400 mb-3 flex items-center gap-2">
-                        <i data-lucide="loader" class="w-4 h-4"></i>
-                        In Progress
-                        <span class="px-2 py-0.5 bg-blue-500/20 rounded text-xs" id="progress-count">0</span>
+                    <h3 class="text-sm font-semibold text-blue-400 mb-3">
+                        In Progress <span class="px-2 py-0.5 bg-blue-500/20 rounded text-xs" id="progress-count">0</span>
                     </h3>
-                    <div id="progress-tasks" class="space-y-2">
-                        <p class="text-sm text-gray-500 italic">No tasks in progress</p>
-                    </div>
+                    <div id="progress-tasks" class="space-y-2"><p class="text-sm text-gray-500 italic">No tasks in progress</p></div>
                 </div>
                 
                 <div>
-                    <h3 class="text-sm font-semibold text-emerald-400 mb-3 flex items-center gap-2">
-                        <i data-lucide="check-circle" class="w-4 h-4"></i>
-                        Completed
-                        <span class="px-2 py-0.5 bg-emerald-500/20 rounded text-xs" id="completed-count">0</span>
+                    <h3 class="text-sm font-semibold text-emerald-400 mb-3">
+                        Completed <span class="px-2 py-0.5 bg-emerald-500/20 rounded text-xs" id="completed-count">0</span>
                     </h3>
-                    <div id="completed-tasks" class="space-y-2">
-                        <p class="text-sm text-gray-500 italic">No completed tasks</p>
-                    </div>
+                    <div id="completed-tasks" class="space-y-2"><p class="text-sm text-gray-500 italic">No completed tasks</p></div>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Task Modal -->
-    <div id="task-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center">
-        <div class="bg-gray-800 rounded-2xl border border-gray-700 w-full max-w-md m-4 p-6">
-            <h3 class="text-xl font-bold text-white mb-4" id="modal-title">Add Task</h3>
-            <textarea id="task-description" rows="3" placeholder="Describe the task..." 
-                      class="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 resize-none focus:outline-none focus:border-violet-500 mb-4"></textarea>
-            <div class="flex gap-2">
-                <button onclick="closeTaskModal()" class="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-white">Cancel</button>
-                <button onclick="submitTask()" class="flex-1 px-4 py-2 bg-violet-500 hover:bg-violet-600 rounded-lg text-white font-semibold">Add to Gege</button>
             </div>
         </div>
     </div>
@@ -329,15 +440,15 @@
         lucide.createIcons();
         
         let tasks = [];
-        let currentBot = null;
+        let results = [];
         let taskIdCounter = 1;
+        let resultIdCounter = 1;
         
-        // Draggable
+        // Draggable Activity Log
         const draggable = document.getElementById('activity-log');
         const dragHandle = draggable.querySelector('.drag-handle');
         let isDragging = false;
-        let currentX, currentY, initialX, initialY;
-        let xOffset = 0, yOffset = 0;
+        let currentX, currentY, initialX, initialY, xOffset = 0, yOffset = 0;
         
         dragHandle.addEventListener('mousedown', dragStart);
         document.addEventListener('mousemove', drag);
@@ -395,29 +506,22 @@
             document.getElementById('gege-panel').classList.add('hidden');
         }
         
-        function showTaskModal(bot) {
-            currentBot = bot;
-            const botNames = {
-                'writebot': 'WriteBot - Content Writing',
-                'pixelbot': 'PixelBot - Image Generation',
-                'keybot': 'KeyBot - Keyword Research',
-                'pressbot': 'PressBot - WordPress Publishing'
-            };
-            document.getElementById('modal-title').textContent = 'Add Task for ' + botNames[bot];
-            document.getElementById('task-modal').classList.remove('hidden');
+        // Toggle task input
+        function toggleTaskInput(bot) {
+            const inputBar = document.getElementById(bot + '-input');
+            const isActive = inputBar.classList.contains('active');
+            document.querySelectorAll('.task-input-bar').forEach(bar => bar.classList.remove('active'));
+            if (!isActive) inputBar.classList.add('active');
         }
         
-        function closeTaskModal() {
-            document.getElementById('task-modal').classList.add('hidden');
-            document.getElementById('task-description').value = '';
-            currentBot = null;
-        }
-        
-        function submitTask() {
-            const description = document.getElementById('task-description').value;
+        // Submit task from bot
+        function submitBotTask(bot) {
+            const input = document.getElementById(bot + '-text');
+            const description = input.value;
             if (description.trim()) {
-                addTaskToGege(description, currentBot);
-                closeTaskModal();
+                addTaskToGege(description, bot);
+                input.value = '';
+                document.getElementById(bot + '-input').classList.remove('active');
             }
         }
         
@@ -432,58 +536,34 @@
         
         function addTaskToGege(description, suggestedBot = null) {
             let assignedBot = suggestedBot;
-            let category = 'general';
             const lowerDesc = description.toLowerCase();
             
             if (!assignedBot) {
-                if (lowerDesc.includes('write') || lowerDesc.includes('blog') || lowerDesc.includes('article') || lowerDesc.includes('content') || lowerDesc.includes('copy')) {
-                    assignedBot = 'writebot';
-                    category = 'writing';
-                } else if (lowerDesc.includes('image') || lowerDesc.includes('picture') || lowerDesc.includes('photo') || lowerDesc.includes('generate') || lowerDesc.includes('draw')) {
-                    assignedBot = 'pixelbot';
-                    category = 'image';
-                } else if (lowerDesc.includes('keyword') || lowerDesc.includes('seo') || lowerDesc.includes('search') || lowerDesc.includes('rank')) {
-                    assignedBot = 'keybot';
-                    category = 'seo';
-                } else if (lowerDesc.includes('publish') || lowerDesc.includes('post') || lowerDesc.includes('wordpress') || lowerDesc.includes('wp')) {
-                    assignedBot = 'pressbot';
-                    category = 'publishing';
-                } else {
-                    assignedBot = 'writebot';
-                    category = 'writing';
-                }
+                if (lowerDesc.includes('write') || lowerDesc.includes('blog') || lowerDesc.includes('article')) assignedBot = 'writebot';
+                else if (lowerDesc.includes('image') || lowerDesc.includes('picture') || lowerDesc.includes('photo')) assignedBot = 'pixelbot';
+                else if (lowerDesc.includes('keyword') || lowerDesc.includes('seo') || lowerDesc.includes('search')) assignedBot = 'keybot';
+                else if (lowerDesc.includes('publish') || lowerDesc.includes('post') || lowerDesc.includes('wordpress')) assignedBot = 'pressbot';
+                else assignedBot = 'writebot';
             }
             
-            const botNames = {
-                'writebot': 'WriteBot',
-                'pixelbot': 'PixelBot',
-                'keybot': 'KeyBot',
-                'pressbot': 'PressBot'
-            };
+            const botNames = { 'writebot': 'WriteBot', 'pixelbot': 'PixelBot', 'keybot': 'KeyBot', 'pressbot': 'PressBot' };
             
             const task = {
                 id: taskIdCounter++,
                 description: description,
                 bot: assignedBot,
                 botName: botNames[assignedBot],
-                category: category,
                 status: 'pending',
                 createdAt: new Date()
             };
             
             tasks.push(task);
             renderTasks();
-            addActivity(`New task added to Gege: "${description.substring(0, 30)}..."`);
-            
-            const pendingCount = tasks.filter(t => t.status === 'pending').length;
-            document.getElementById('gege-task-count').textContent = pendingCount;
+            addActivity(`New task: "${description.substring(0, 30)}..."`);
+            document.getElementById('gege-task-count').textContent = tasks.filter(t => t.status === 'pending').length;
         }
         
         function renderTasks() {
-            const pendingContainer = document.getElementById('pending-tasks');
-            const progressContainer = document.getElementById('progress-tasks');
-            const completedContainer = document.getElementById('completed-tasks');
-            
             const pending = tasks.filter(t => t.status === 'pending');
             const inProgress = tasks.filter(t => t.status === 'approved');
             const completed = tasks.filter(t => t.status === 'completed');
@@ -491,65 +571,70 @@
             document.getElementById('pending-count').textContent = pending.length;
             document.getElementById('progress-count').textContent = inProgress.length;
             document.getElementById('completed-count').textContent = completed.length;
-            document.getElementById('gege-task-count').textContent = pending.length;
             
-            if (pending.length === 0) {
-                pendingContainer.innerHTML = '<p class="text-sm text-gray-500 italic">No pending tasks</p>';
-            } else {
-                pendingContainer.innerHTML = pending.map(task => `
-                    <div class="task-card bg-gray-900/50 border border-amber-500/30 rounded-lg p-3">
+            const pendingContainer = document.getElementById('pending-tasks');
+            pendingContainer.innerHTML = pending.length === 0 
+                ? '<p class="text-sm text-gray-500 italic">No pending tasks</p>'
+                : pending.map(task => `
+                    <div class="bg-gray-900/50 border border-amber-500/30 rounded-lg p-3">
                         <div class="flex items-start justify-between">
                             <div class="flex-1">
                                 <p class="text-sm text-white mb-1">${task.description}</p>
-                                <div class="flex items-center gap-2">
-                                    <span class="px-2 py-0.5 bg-gray-700 rounded text-xs text-gray-300">${task.botName}</span>
-                                    <span class="px-2 py-0.5 bg-amber-500/20 text-amber-400 rounded text-xs">Pending</span>
-                                </div>
+                                <span class="px-2 py-0.5 bg-gray-700 rounded text-xs text-gray-300">${task.botName}</span>
                             </div>
-                            <button onclick="approveTask(${task.id})" class="ml-2 px-3 py-1 bg-emerald-500 hover:bg-emerald-600 rounded text-xs font-semibold text-white flex items-center gap-1">
-                                <i data-lucide="check" class="w-3 h-3"></i>
-                                Approve
-                            </button>
+                            <button onclick="approveTask(${task.id})" class="ml-2 px-3 py-1 bg-emerald-500 hover:bg-emerald-600 rounded text-xs font-semibold text-white">Approve</button>
                         </div>
                     </div>
                 `).join('');
-            }
             
-            if (inProgress.length === 0) {
-                progressContainer.innerHTML = '<p class="text-sm text-gray-500 italic">No tasks in progress</p>';
-            } else {
-                progressContainer.innerHTML = inProgress.map(task => `
-                    <div class="task-card bg-gray-900/50 border border-blue-500/30 rounded-lg p-3">
-                        <div class="flex items-center gap-2">
-                            <div class="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
-                            <p class="text-sm text-white">${task.description}</p>
-                        </div>
-                        <div class="flex items-center gap-2 mt-1">
-                            <span class="px-2 py-0.5 bg-gray-700 rounded text-xs text-gray-300">${task.botName}</span>
-                            <span class="px-2 py-0.5 bg-blue-500/20 text-blue-400 rounded text-xs">Working...</span>
-                        </div>
+            const progressContainer = document.getElementById('progress-tasks');
+            progressContainer.innerHTML = inProgress.length === 0
+                ? '<p class="text-sm text-gray-500 italic">No tasks in progress</p>'
+                : inProgress.map(task => `
+                    <div class="bg-gray-900/50 border border-blue-500/30 rounded-lg p-3">
+                        <p class="text-sm text-white">${task.description}</p>
+                        <span class="px-2 py-0.5 bg-blue-500/20 text-blue-400 rounded text-xs">${task.botName} working...</span>
                     </div>
                 `).join('');
-            }
             
-            if (completed.length === 0) {
-                completedContainer.innerHTML = '<p class="text-sm text-gray-500 italic">No completed tasks</p>';
-            } else {
-                completedContainer.innerHTML = completed.map(task => `
-                    <div class="task-card bg-gray-900/50 border border-emerald-500/30 rounded-lg p-3 opacity-60">
-                        <div class="flex items-center gap-2">
-                            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
-                            <p class="text-sm text-white line-through">${task.description}</p>
-                        </div>
-                        <div class="flex items-center gap-2 mt-1">
-                            <span class="px-2 py-0.5 bg-gray-700 rounded text-xs text-gray-300">${task.botName}</span>
-                            <span class="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 rounded text-xs">Done</span>
-                        </div>
+            const completedContainer = document.getElementById('completed-tasks');
+            completedContainer.innerHTML = completed.length === 0
+                ? '<p class="text-sm text-gray-500 italic">No completed tasks</p>'
+                : completed.map(task => `
+                    <div class="bg-gray-900/50 border border-emerald-500/30 rounded-lg p-3 opacity-60">
+                        <p class="text-sm text-white line-through">${task.description}</p>
+                        <span class="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 rounded text-xs">Done</span>
                     </div>
                 `).join('');
-            }
+        }
+        
+        // Generate mock result based on bot type
+        function generateResult(task) {
+            const results = {
+                writebot: [
+                    { title: "SEO Article: " + task.description, content: "Here's a comprehensive 1500-word article optimized for search engines. It includes proper headings, meta descriptions, and keyword density analysis...", type: "text" },
+                    { title: "Marketing Copy", content: "High-converting copy with compelling CTAs, emotional triggers, and benefit-driven messaging designed to maximize conversions...", type: "text" },
+                    { title: "Product Description", content: "Engaging product description highlighting key features, benefits, and unique selling points with SEO optimization...", type: "text" }
+                ],
+                pixelbot: [
+                    { title: "Hero Image Generated", content: "Created a stunning hero banner (1920x1080) with gradient overlays and professional typography placement...", type: "image", placeholder: "🖼️ Hero Image" },
+                    { title: "Social Media Graphics", content: "Generated 3 variants for Instagram, Twitter, and LinkedIn with optimal dimensions and brand colors...", type: "image", placeholder: "🎨 Social Graphics" },
+                    { title: "Product Photography", content: "AI-enhanced product shot with studio lighting, shadow effects, and background removal...", type: "image", placeholder: "📸 Product Shot" }
+                ],
+                keybot: [
+                    { title: "Keyword Research Report", content: "Found 50 high-volume keywords with low competition. Top picks: 'liteapi tutorial' (2.4K searches), 'liteapi review' (1.8K searches)...", type: "text" },
+                    { title: "Competitor Analysis", content: "Analyzed top 5 competitors. Gap identified: None are targeting long-tail keywords. Opportunity score: 87/100...", type: "text" },
+                    { title: "Content Cluster Map", content: "Strategic content plan with pillar page and 10 supporting cluster articles for topical authority...", type: "text" }
+                ],
+                pressbot: [
+                    { title: "Published to WordPress", content: "Article successfully published with SEO meta tags, featured image, and automatic social sharing enabled...", type: "text" },
+                    { title: "Scheduled Post", content: "Post scheduled for optimal engagement time (Tuesday 9 AM). Email notification set for publish confirmation...", type: "text" },
+                    { title: "Multi-Site Deployed", content: "Content synced across 3 WordPress sites with canonical tags and cross-linking structure...", type: "text" }
+                ]
+            };
             
-            lucide.createIcons();
+            const botResults = results[task.bot] || results.writebot;
+            return botResults[Math.floor(Math.random() * botResults.length)];
         }
         
         function approveTask(taskId) {
@@ -557,49 +642,123 @@
             if (task) {
                 task.status = 'approved';
                 renderTasks();
-                addActivity(`Task approved! ${task.botName} is now working on: "${task.description.substring(0, 25)}..."`);
-                
+                addActivity(`${task.botName} started working`);
                 document.getElementById(task.bot + '-status').textContent = 'WORKING';
                 document.getElementById(task.bot + '-status').className = 'px-2 py-0.5 rounded-full text-xs font-bold bg-blue-500/20 text-blue-400 border border-blue-500/40';
                 
                 setTimeout(() => {
                     task.status = 'completed';
                     renderTasks();
-                    addActivity(`${task.botName} completed: "${task.description.substring(0, 25)}..."`);
+                    addActivity(`${task.botName} completed task`);
                     document.getElementById(task.bot + '-status').textContent = 'IDLE';
                     document.getElementById(task.bot + '-status').className = 'px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40';
-                }, 5000);
+                    
+                    // Add result
+                    const result = generateResult(task);
+                    addResult(task, result);
+                }, 3000);
             }
+        }
+        
+        function addResult(task, result) {
+            const resultItem = {
+                id: resultIdCounter++,
+                taskId: task.id,
+                bot: task.bot,
+                botName: task.botName,
+                taskDescription: task.description,
+                result: result,
+                completedAt: new Date()
+            };
+            
+            results.unshift(resultItem);
+            renderResults();
+        }
+        
+        function renderResults() {
+            const container = document.getElementById('results-container');
+            document.getElementById('results-count').textContent = results.length + ' result' + (results.length !== 1 ? 's' : '');
+            
+            if (results.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-gray-500">
+                        <i data-lucide="inbox" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>
+                        <p class="text-lg">No results yet</p>
+                        <p class="text-sm mt-1">Approve tasks to see outputs here</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = results.map(r => `
+                    <div class="result-item bg-gray-900/50 border border-gray-700/50 rounded-xl p-4">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 ${getBotColor(r.bot)} rounded-lg flex items-center justify-center">
+                                    <i data-lucide="${getBotIcon(r.bot)}" class="w-5 h-5 text-white"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-white">${r.result.title}</h4>
+                                    <p class="text-xs text-gray-400">${r.botName} • ${r.completedAt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-800/50 rounded-lg p-3">
+                            <p class="text-sm text-gray-300 mb-2"><strong>Task:</strong> ${r.taskDescription}</p>
+                            <div class="border-t border-gray-700 pt-2">
+                                ${r.result.type === 'image' 
+                                    ? `<div class="flex items-center gap-3">
+                                        <div class="w-20 h-20 bg-gray-700 rounded-lg flex items-center justify-center text-3xl">${r.result.placeholder}</div>
+                                        <p class="text-sm text-gray-300 flex-1">${r.result.content}</p>
+                                    </div>`
+                                    : `<p class="text-sm text-gray-300">${r.result.content}</p>`
+                                }
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            lucide.createIcons();
+        }
+        
+        function getBotColor(bot) {
+            const colors = { writebot: 'bg-emerald-500', pixelbot: 'bg-violet-500', keybot: 'bg-amber-500', pressbot: 'bg-blue-500' };
+            return colors[bot] || 'bg-gray-500';
+        }
+        
+        function getBotIcon(bot) {
+            const icons = { writebot: 'pen-tool', pixelbot: 'image', keybot: 'search', pressbot: 'rocket' };
+            return icons[bot] || 'bot';
         }
         
         function addActivity(message) {
             const list = document.getElementById('activity-list');
             const emptyState = list.querySelector('.text-center');
-            if (emptyState) {
-                emptyState.remove();
-            }
+            if (emptyState) emptyState.remove();
             
             const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             const item = document.createElement('div');
             item.className = 'flex items-center gap-3 p-2 bg-gray-900/50 rounded-lg text-sm';
-            item.innerHTML = `
-                <span class="text-gray-500 text-xs">${time}</span>
-                <span class="text-gray-300">${message}</span>
-            `;
+            item.innerHTML = `<span class="text-gray-500 text-xs">${time}</span><span class="text-gray-300">${message}</span>`;
             list.insertBefore(item, list.firstChild);
-            
-            const count = list.children.length;
-            document.getElementById('activity-count').textContent = count;
+            document.getElementById('activity-count').textContent = list.children.length;
         }
+        
+        // Enter key handlers
+        document.querySelectorAll('input[id$="-text"]').forEach(input => {
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    const bot = input.id.replace('-text', '');
+                    submitBotTask(bot);
+                }
+            });
+        });
+        
+        document.getElementById('new-task-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addTask();
+        });
         
         document.getElementById('gege-panel').addEventListener('click', (e) => {
             if (e.target === e.currentTarget) closeGegePanel();
-        });
-        document.getElementById('task-modal').addEventListener('click', (e) => {
-            if (e.target === e.currentTarget) closeTaskModal();
-        });
-        document.getElementById('new-task-input').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') addTask();
         });
     </script>
 </body>
