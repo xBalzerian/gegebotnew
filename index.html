@@ -22,38 +22,46 @@
             border-color: rgba(239, 68, 68, 0.5) !important;
         }
         
-        /* Hover Info Panel */
+        /* Hover Info Panel - FIXED */
+        .bot-card {
+            position: relative;
+            z-index: 1;
+        }
+        .bot-card:hover {
+            z-index: 100;
+        }
         .hover-info {
             position: absolute;
-            top: calc(100% + 10px);
+            top: 100%;
             left: 50%;
-            transform: translateX(-50%) scale(0.95);
-            width: 280px;
-            background: linear-gradient(135deg, rgba(17, 24, 39, 0.98), rgba(31, 41, 55, 0.98));
+            transform: translateX(-50%) translateY(10px) scale(0.95);
+            width: 260px;
+            background: rgba(17, 24, 39, 0.98);
             border: 2px solid;
             border-radius: 12px;
             padding: 16px;
             opacity: 0;
-            visibility: hidden;
-            transition: all 0.2s ease;
-            z-index: 1000;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            z-index: 9999;
             backdrop-filter: blur(10px);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(239, 68, 68, 0.2);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 30px rgba(239, 68, 68, 0.3);
+            margin-top: 10px;
         }
         .hover-info::before {
             content: '';
             position: absolute;
-            top: -8px;
+            top: -10px;
             left: 50%;
             transform: translateX(-50%);
             border-left: 10px solid transparent;
             border-right: 10px solid transparent;
-            border-bottom: 10px solid currentColor;
+            border-bottom: 10px solid rgba(17, 24, 39, 0.98);
         }
         .bot-card:hover .hover-info {
             opacity: 1;
-            visibility: visible;
-            transform: translateX(-50%) scale(1);
+            pointer-events: auto;
+            transform: translateX(-50%) translateY(0) scale(1);
         }
         
         /* Draggable */
